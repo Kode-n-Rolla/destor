@@ -38,6 +38,10 @@ pub struct Organization {
     pub bump: u8,
 }
 
+impl Organization {
+    pub const INIT_SPACE: usize = 8 + 1 + 32 + 1 + 1 + 1;
+}
+
 #[account]
 pub struct Member {
     pub organization: Pubkey,

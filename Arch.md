@@ -511,16 +511,16 @@ Avoid putting personally identifying data directly on-chain:
 ---
 
 # Process
-1. Accounts/enums
-2. initialize_protocol
-3. register_organization
-4. add/remove member
-5. mint_vehicle без NFT CPI
-6. transfer_vehicle
-7. add_note + mileage monotonicity
-8. потом NFT
-9. потом tests
-10. потом frontend
+[X] Accounts/enums
+[X] initialize_protocol
+[ ] register_organization
+[ ] add/remove member
+[ ] mint_vehicle без NFT CPI
+[ ] transfer_vehicle
+[ ] add_note + mileage monotonicity
+[ ] потом NFT
+[ ] потом tests
+[ ] потом frontend
 
 ---
 

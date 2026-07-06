@@ -1,4 +1,6 @@
 use anchor_lang::prelude::*;
+
+use crate::types::Role;
 use instructions::*;
 
 pub mod constant;
@@ -14,9 +16,15 @@ pub mod destor {
     use super::*;
 
     pub fn initialize(ctx: Context<InitializeProtocol>) -> Result<()> {
-        instructions::initialize_protocol::handler(ctx);
-        
-        Ok(())
+        instructions::initialize_protocol::initialize_protocol(ctx)
+    }
+
+    pub fn register_organization(
+        ctx: Context<RegisterOrganization>,
+        role: Role,
+        threshold: u8
+    ) -> Result<()> {
+        instructions::register_organization::register_organization(ctx, role, threshold)
     }
 }
 
