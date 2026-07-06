@@ -11,8 +11,8 @@ pub struct ProtocolConfig {
 pub struct Vehicle {
     vin_hash: [u8; 32],
     nft_asset: Pubkey,
-    manufucturer: Pubkey,
-    b_day: u64, // unix time
+    manufacturer: Pubkey,
+    manufactured_at: u64, // unix time
     owner: Pubkey,
     color: String,
     mileage: u64,     // is the latest accepted mileage.
@@ -48,7 +48,7 @@ pub struct Note {
     note_index: u64,
     role: Role,
     note_kind: NoteKind,
-    mileaege: u64,
+    mileage: u64,
     timestamp: u64,
     description: String, // restrict by 200 symbols, e.g.
     signers: Vec<Pubkey>,
