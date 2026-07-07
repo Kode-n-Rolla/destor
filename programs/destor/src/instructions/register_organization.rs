@@ -41,6 +41,8 @@ pub fn register_organization(ctx: Context<RegisterOrganization>, role: Role, thr
     organization.threshold = threshold;
     organization.active = true;
     organization.bump = ctx.bumps.organization;
+
+    // @todo add event
     
     Ok(())
 }

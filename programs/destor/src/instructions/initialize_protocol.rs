@@ -26,5 +26,7 @@ pub fn initialize_protocol(ctx: Context<InitializeProtocol>) -> Result<()> {
     protocol_config.admin = ctx.accounts.admin.key();
     protocol_config.bump = ctx.bumps.protocol_config;
 
+    // @todo add event
+
     Ok(())
 }

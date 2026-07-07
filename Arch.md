@@ -100,7 +100,7 @@ This prevents different user input formats from producing different hashes for t
 
 ## CoreAdmin
 
-The CoreAdmin manages trusted organizations and members.
+The CoreAdmin manages trusted organizations at the registry level.
 
 Actions:
 
@@ -109,12 +109,28 @@ Actions:
 - register service center
 - register road inspection organization
 - register insurance organization
-- add organization member
-- remove organization member
-- set organization threshold
 - deactivate organization
+- optionally change organization authority
+- optionally change organization threshold
 
 For MVP, one admin is acceptable. In production, this can be replaced with a multisig or DAO.
+
+## Organization Authority
+
+Each registered organization has its own authority wallet.
+
+Actions:
+
+- add organization member
+- remove organization member
+- optionally set organization threshold
+
+This keeps responsibilities separated:
+
+```text
+CoreAdmin decides which organizations are trusted.
+Organization authority decides which wallets belong to that organization.
+```
 
 ## Manufacturer
 
@@ -278,6 +294,8 @@ Notes:
 
 - `role` should be an enum, not a free-form string.
 - `threshold` defines how many valid member signatures are required.
+- `authority` manages members for this organization.
+- CoreAdmin registers or deactivates the organization, but does not manage every member in normal operation.
 
 ## Member
 
@@ -296,6 +314,8 @@ Notes:
 
 - Do not store the whole Organization inside Member.
 - Store the organization public key.
+- Member accounts are created by the organization authority, not by CoreAdmin.
+- A member is unique by `(organization, wallet)`.
 
 ## Note
 
@@ -367,10 +387,16 @@ initialize_protocol(admin)
 
 ```text
 register_organization(role, authority, threshold)
+deactivate_organization(organization)
+change_organization_authority(organization, new_authority) // optional
+set_organization_threshold(organization, threshold) // optional
+```
+
+## Member Management
+
+```text
 add_organization_member(organization, member)
 remove_organization_member(organization, member)
-set_organization_threshold(organization, threshold)
-deactivate_organization(organization)
 ```
 
 ## Vehicle Lifecycle
@@ -422,6 +448,13 @@ Every organization-controlled action must:
 - use an active organization
 - match the required role
 - satisfy the organization threshold
+
+Every member-management action must:
+
+- be signed by the organization authority
+- use an active organization
+- create or update a Member PDA derived from organization and wallet
+- not require CoreAdmin during normal operation
 
 ---
 
@@ -513,9 +546,9 @@ Avoid putting personally identifying data directly on-chain:
 # Process
 [X] Accounts/enums
 [X] initialize_protocol
-[ ] register_organization
+[X] register_organization
 [ ] add/remove member
-[ ] mint_vehicle без NFT CPI
+[ ] mint_vehicle без NFT CPI или все-таки NFT?
 [ ] transfer_vehicle
 [ ] add_note + mileage monotonicity
 [ ] потом NFT

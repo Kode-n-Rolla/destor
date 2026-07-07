@@ -26,5 +26,9 @@ pub mod destor {
     ) -> Result<()> {
         instructions::register_organization::register_organization(ctx, role, threshold)
     }
+
+    pub fn add_organization_member(ctx: Context<AddMember>, wallet: Pubkey) -> Result<()> {
+        instructions::add_organization_member::add_organization_member(ctx, wallet)
+    }
 }
 

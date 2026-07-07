@@ -50,6 +50,10 @@ pub struct Member {
     pub bump: u8,
 }
 
+impl Member {
+    pub const INIT_SPACE: usize = 8 + 32 + 32 + 1 + 1;
+}
+
 #[account]
 pub struct Note {
     pub vehicle: Pubkey,
