@@ -43,6 +43,8 @@ pub fn register_organization(ctx: Context<RegisterOrganization>, role: Role, thr
     organization.active = true;
     organization.bump = ctx.bumps.organization;
 
+    let current_time = Clock::get()?.unix_timestamp;
+
     emit!(
         OrganizationRegistered {
             admin: ctx.accounts.admin.key(),
@@ -50,6 +52,7 @@ pub fn register_organization(ctx: Context<RegisterOrganization>, role: Role, thr
             organization_pda: ctx.accounts.organization.key(),
             authority: ctx.accounts.organization.authority.key(),
             threshold: threshold,
+            timestamp: current_time,
         }
     );
     
