@@ -59,7 +59,6 @@ pub struct RemoveMember<'info> {
 
     #[account(
         mut,
-        close = authority,
         seeds = [MEMBER_SEED, organization.key().as_ref(), wallet.as_ref()],
         bump
     )]
@@ -69,8 +68,6 @@ pub struct RemoveMember<'info> {
         has_one = authority,
     )]
     pub organization: Account<'info, Organization>,
-
-    pub system_program: Program<'info, System>,
 }
 
 pub fn remove_organization_member(ctx: Context<RemoveMember>, wallet: Pubkey) -> Result<()> {

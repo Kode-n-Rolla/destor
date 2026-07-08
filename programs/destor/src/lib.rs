@@ -31,5 +31,9 @@ pub mod destor {
     pub fn add_organization_member(ctx: Context<AddMember>, wallet: Pubkey) -> Result<()> {
         instructions::member::add_organization_member(ctx, wallet)
     }
+
+    pub fn remove_organization_member(ctx: Context<RemoveMember>, wallet: Pubkey) -> Result<()> {
+        instructions::member::remove_organization_member(ctx, wallet)
+    }
 }
 

@@ -6,4 +6,6 @@ pub enum DeStorError {
     OrganizationNotActive,
     #[msg("Member is not active")]
     MemberIsNotActive,
+    #[msg("Invalid Member")]
+    InvalidMember,
 }
