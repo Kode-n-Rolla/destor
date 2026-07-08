@@ -15,6 +15,7 @@ pub struct OrganizationRegistered {
     pub organization_pda: Pubkey,
     pub authority: Pubkey,
     pub threshold: u8,
+    pub timestamp: i64,
 }
 
 #[event]
@@ -23,4 +24,14 @@ pub struct OrganizationMemberAdded {
     pub authority: Pubkey,
     pub member_pda: Pubkey,
     pub member: Pubkey,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct OrganizationMemberRemoved {
+    pub organization_pda: Pubkey,
+    pub authority: Pubkey,
+    pub member_pda: Pubkey,
+    pub member: Pubkey,
+    pub timestamp: i64,
 }
