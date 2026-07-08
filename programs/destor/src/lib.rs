@@ -4,6 +4,7 @@ use crate::types::Role;
 use instructions::*;
 
 pub mod constant;
+pub mod events;
 pub mod error;
 pub mod instructions;
 pub mod state;

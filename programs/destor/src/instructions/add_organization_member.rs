@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use crate::{
     constant::MEMBER_SEED,
+    events::OrganizationMemberAdded,
     error::DeStoreError,
     state::{Member, Organization},
 };
@@ -37,7 +38,14 @@ pub fn add_organization_member(ctx: Context<AddMember>, wallet: Pubkey) -> Resul
     member.active = true;
     member.bump = ctx.bumps.member;
 
-    // @todo add event
+    emit!(
+        OrganizationMemberAdded {
+            organization_pda: ctx.accounts.organization.key(),
+            authority: ctx.accounts.authority.key(),
+            member_pda: ctx.accounts.member.key(),
+            member: wallet,
+        }
+    );
 
     Ok(())
 }

@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use crate::{
     constant::{ORGANIZATION_SEED, PROTOCOL_CONFIG_SEED},
+    events::OrganizationRegistered,
     state::{Organization, ProtocolConfig},
     types::Role,
 };
@@ -42,7 +43,15 @@ pub fn register_organization(ctx: Context<RegisterOrganization>, role: Role, thr
     organization.active = true;
     organization.bump = ctx.bumps.organization;
 
-    // @todo add event
+    emit!(
+        OrganizationRegistered {
+            admin: ctx.accounts.admin.key(),
+            role: organization.role.clone(),
+            organization_pda: ctx.accounts.organization.key(),
+            authority: ctx.accounts.organization.authority.key(),
+            threshold: threshold,
+        }
+    );
     
     Ok(())
 }
