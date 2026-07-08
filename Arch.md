@@ -375,6 +375,35 @@ OwnershipTransfer
 
 ---
 
+# Project Structure
+```
+protocol.rs
+- initialize_protocol
+
+organization.rs
+- register_organization
+- deactivate_organization
+- set_organization_threshold
+- change_organization_authority
+
+member.rs
+- add_organization_member
+- remove_organization_member
+
+vehicle.rs
+- mint_vehicle
+- transfer_vehicle
+- verify_owner_transfer
+
+note.rs
+- add_service_note
+- add_inspection_note
+- add_insurance_note
+- add_owner_verified_note
+```
+
+---
+
 # MVP Instructions
 
 ## Protocol Setup
@@ -544,16 +573,16 @@ Avoid putting personally identifying data directly on-chain:
 ---
 
 # Process
-[X] Accounts/enums
-[X] initialize_protocol
-[X] register_organization
-[ ] add/remove member
-[ ] mint_vehicle без NFT CPI или все-таки NFT?
-[ ] transfer_vehicle
-[ ] add_note + mileage monotonicity
-[ ] потом NFT
-[ ] потом tests
-[ ] потом frontend
+- [X] Accounts/enums
+- [X] initialize_protocol
+- [X] register_organization
+- [ ] add/remove member
+- [ ] mint_vehicle без NFT CPI или все-таки NFT?
+- [ ] transfer_vehicle
+- [ ] add_note + mileage monotonicity
+- [ ] потом NFT
+- [ ] потом tests
+- [ ] потом frontend
 
 ---
 

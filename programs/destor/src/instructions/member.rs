@@ -49,3 +49,7 @@ pub fn add_organization_member(ctx: Context<AddMember>, wallet: Pubkey) -> Resul
 
     Ok(())
 }
+
+pub fn remove_organization_member() {
+    todo!();
+}

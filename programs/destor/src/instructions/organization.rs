@@ -55,3 +55,15 @@ pub fn register_organization(ctx: Context<RegisterOrganization>, role: Role, thr
     
     Ok(())
 }
+
+pub fn deactivate_organization() {
+    todo!();
+}
+
+pub fn set_organization_threshold() {
+    todo!();
+}
+
+pub fn change_organization_authority() {
+    todo!();
+}
