@@ -71,18 +71,22 @@ pub struct RemoveMember<'info> {
 }
 
 pub fn remove_organization_member(ctx: Context<RemoveMember>, wallet: Pubkey) -> Result<()> {
-    require!(ctx.accounts.organization.active, DeStorError::OrganizationNotActive);
-    require!(ctx.accounts.member.active, DeStorError::MemberIsNotActive);
+    let accounts = ctx.accounts;
+    require!(accounts.organization.active, DeStorError::OrganizationNotActive);
+    require!(accounts.member.active, DeStorError::MemberIsNotActive);
 
-    ctx.accounts.member.active = false;
+    require_eq!(accounts.member.organization, accounts.organization.key(), DeStorError::InvalidMember);
+    require_eq!(accounts.member.wallet, wallet, DeStorError::InvalidMember);
+
+    accounts.member.active = false;
 
     let current_time = Clock::get()?.unix_timestamp;
 
     emit!(
         OrganizationMemberRemoved {
-            organization_pda: ctx.accounts.organization.key(),
-            authority: ctx.accounts.authority.key(),
-            member_pda: ctx.accounts.member.key(),
+            organization_pda: accounts.organization.key(),
+            authority: accounts.authority.key(),
+            member_pda: accounts.member.key(),
             member: wallet,
             timestamp: current_time,
         }
