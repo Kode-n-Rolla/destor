@@ -8,4 +8,10 @@ pub enum DeStorError {
     MemberIsNotActive,
     #[msg("Invalid Member")]
     InvalidMember,
+    #[msg("Organization and Member did not match")]
+    OrgDidntMatchWithMember,
+    #[msg("Threshold must be > 1")]
+    InvalidThresholdValue,
+    #[msg("Invalid Pubkey")]
+    InvalidPubkey,
 }

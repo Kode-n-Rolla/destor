@@ -33,13 +33,15 @@ impl Vehicle {
 pub struct Organization {
     pub role: Role,
     pub authority: Pubkey,
+    pub pending_authority: Pubkey,
+    pub organization_id: [u8; 32],
     pub threshold: u8, // defines how many valid member signatures are required.
     pub active: bool,
     pub bump: u8,
 }
 
 impl Organization {
-    pub const INIT_SPACE: usize = 8 + 1 + 32 + 1 + 1 + 1;
+    pub const INIT_SPACE: usize = 8 + 1 + 32 + 32 + 32 + 1 + 1 + 1;
 }
 
 #[account]
