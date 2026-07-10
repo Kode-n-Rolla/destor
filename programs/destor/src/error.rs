@@ -18,4 +18,10 @@ pub enum DeStorError {
     InvalidRole,
     #[msg("String is too long")]
     StringToLong,
+    #[msg("Invalid VIN")]
+    InvalidVin,
+    #[msg("Not Owner")]
+    NotOwner,
+    #[msg("Initial Owner Already Assigned")]
+    InitialOwnerAlreadyAssigned,
 }

@@ -62,6 +62,14 @@ pub mod destor {
         color: String
     ) -> Result<()> {
         instructions::vehicle::mint_vehicle(ctx, vin_hash, model, color)
-}
+    }
+
+    pub fn assign_initial_owner(ctx: Context<InitialOwner>, vin_hash: [u8; 32], new_owner: Pubkey) -> Result<()> {
+        instructions::vehicle::assign_initial_owner(ctx, vin_hash, new_owner)
+    }
+
+    pub fn transfer_vehicle(ctx: Context<TransferVehicle>, vin_hash: [u8; 32], new_owner: Pubkey) -> Result<()> {
+        instructions::vehicle::transfer_vehicle(ctx, vin_hash, new_owner)
+    } 
 }
 

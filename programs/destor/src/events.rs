@@ -79,3 +79,11 @@ pub struct MintedVehicle {
     pub vehicle_pda: Pubkey,
     pub timestamp: i64,
 }
+
+#[event]
+pub struct TransferredVehicle {
+    pub old_owner: Pubkey,
+    pub new_owner: Pubkey,
+    pub vehicle_pda: Pubkey,
+    pub timestamp: i64,
+}
