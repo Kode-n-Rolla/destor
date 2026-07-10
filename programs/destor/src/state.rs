@@ -1,3 +1,5 @@
+use crate::constant::{MAX_COLOR_LENGTH, MAX_MODEL_LENGTH};
+
 use super::types::*;
 use anchor_lang::prelude::*;
 
@@ -16,7 +18,8 @@ pub struct Vehicle {
     pub vin_hash: [u8; 32],
     pub nft_asset: Pubkey,
     pub manufacturer: Pubkey,
-    pub manufactured_at: u64, // unix time
+    pub model: String,
+    pub manufactured_at: i64, // unix time
     pub owner: Pubkey,
     pub color: String,
     pub mileage: u64,     // is the latest accepted mileage.
@@ -26,7 +29,7 @@ pub struct Vehicle {
 }
 
 impl Vehicle {
-    pub const INIT_SPACE: usize = 8 + 32 + 4 + 32 + 8 + 32;
+    pub const INIT_SPACE: usize = 8 + 32 + 32 + 32 + (4 + MAX_MODEL_LENGTH) + 8 + 32 + (4 + MAX_COLOR_LENGTH) + 8 + 8 + 2 + 1;
 }
 
 #[account]
