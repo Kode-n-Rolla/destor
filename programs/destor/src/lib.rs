@@ -54,5 +54,14 @@ pub mod destor {
     pub fn remove_organization_member(ctx: Context<RemoveMember>, wallet: Pubkey) -> Result<()> {
         instructions::member::remove_organization_member(ctx, wallet)
     }
+
+    pub fn mint_vehicle(
+    ctx: Context<MintVehicle>,
+    vin_hash: [u8; 32],
+    model: String,
+    color: String
+) -> Result<()> {
+    instructions::vehicle::mint_vehicle(ctx, vin_hash, model, color)
+}
 }
 
