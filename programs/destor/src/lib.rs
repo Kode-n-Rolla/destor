@@ -56,12 +56,12 @@ pub mod destor {
     }
 
     pub fn mint_vehicle(
-    ctx: Context<MintVehicle>,
-    vin_hash: [u8; 32],
-    model: String,
-    color: String
-) -> Result<()> {
-    instructions::vehicle::mint_vehicle(ctx, vin_hash, model, color)
+        ctx: Context<MintVehicle>,
+        vin_hash: [u8; 32],
+        model: String,
+        color: String
+    ) -> Result<()> {
+        instructions::vehicle::mint_vehicle(ctx, vin_hash, model, color)
 }
 }
 

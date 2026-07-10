@@ -47,6 +47,7 @@ impl Organization {
     pub const INIT_SPACE: usize = 8 + 1 + 32 + 32 + 32 + 1 + 1 + 1;
 }
 
+// could be official service, dealer, minter. @todo think about add enum MemberRole
 #[account]
 pub struct Member {
     pub organization: Pubkey,

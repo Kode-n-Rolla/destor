@@ -76,5 +76,6 @@ pub struct MintedVehicle {
     pub organization_pda: Pubkey,
     pub signer: Pubkey,
     pub vin_hash: [u8; 32],
+    pub vehicle_pda: Pubkey,
     pub timestamp: i64,
 }

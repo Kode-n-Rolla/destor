@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use crate::{
-    constant::{MAX_COLOR_LENGTH, MAX_MODEL_LENGTH}, error::DeStorError, events::MintedVehicle, state::{Member, Organization, Vehicle}, types::Role,
+    constant::{MAX_COLOR_LENGTH, MAX_MODEL_LENGTH, MEMBER_SEED, VEHICLE_SEED}, error::DeStorError, events::MintedVehicle, state::{Member, Organization, Vehicle}, types::Role,
 };
 
 #[derive(Accounts)]
@@ -12,6 +12,8 @@ pub struct MintVehicle<'info> {
     pub organization: Account<'info, Organization>,
 
     #[account(
+        seeds = [MEMBER_SEED, organization.key().as_ref(), wallet.key().as_ref()],
+        bump,
         has_one = wallet,
     )]
     pub member: Account<'info, Member>,
@@ -20,7 +22,7 @@ pub struct MintVehicle<'info> {
         init,
         payer = wallet,
         space = Vehicle::INIT_SPACE,
-        seeds = [organization.organization_id.as_ref(), vin_hash.as_ref()],
+        seeds = [VEHICLE_SEED, organization.organization_id.as_ref(), vin_hash.as_ref()],
         bump,
     )]
     pub vehicle: Account<'info, Vehicle>,
@@ -49,7 +51,7 @@ pub fn mint_vehicle(
     vehicle.manufacturer = ctx.accounts.organization.key();
     vehicle.model = model;
     vehicle.manufactured_at = current_time;
-    vehicle.owner = ctx.accounts.organization.key();
+    vehicle.owner = Pubkey::default();
     vehicle.color = color;
     vehicle.mileage = 0;
     vehicle.note_count = 0;
@@ -60,6 +62,7 @@ pub fn mint_vehicle(
         organization_pda: ctx.accounts.organization.key(),
         signer: ctx.accounts.member.key(),
         vin_hash: vin_hash,
+        vehicle_pda: vehicle.key(),
         timestamp: current_time,
     });
 

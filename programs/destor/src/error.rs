@@ -16,6 +16,6 @@ pub enum DeStorError {
     InvalidPubkey,
     #[msg("Invalid Role")]
     InvalidRole,
-    #[msg("String string too long")]
+    #[msg("String is too long")]
     StringToLong,
 }
