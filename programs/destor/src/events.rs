@@ -70,3 +70,11 @@ pub struct OrganizationMemberRemoved {
     pub member: Pubkey,
     pub timestamp: i64,
 }
+
+#[event]
+pub struct MintedVehicle {
+    pub organization_pda: Pubkey,
+    pub signer: Pubkey,
+    pub vin_hash: [u8; 32],
+    pub timestamp: i64,
+}

@@ -14,4 +14,8 @@ pub enum DeStorError {
     InvalidThresholdValue,
     #[msg("Invalid Pubkey")]
     InvalidPubkey,
+    #[msg("Invalid Role")]
+    InvalidRole,
+    #[msg("String string too long")]
+    StringToLong,
 }
