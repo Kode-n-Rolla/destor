@@ -62,6 +62,7 @@ impl Member {
 
 #[account]
 pub struct Note {
+    pub status: Status,
     pub vehicle: Pubkey,
     pub note_index: u64,
     pub role: Role,

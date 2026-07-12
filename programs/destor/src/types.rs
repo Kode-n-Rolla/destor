@@ -36,3 +36,10 @@ pub enum NoteKind {
     OwnerMaintenance,
     OwnershipTransfer,
 }
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
+pub enum Status {
+    Pending,
+    Approved,
+    Rejected,
+}
