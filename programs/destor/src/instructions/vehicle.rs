@@ -176,3 +176,7 @@ pub fn transfer_vehicle(ctx: Context<TransferVehicle>, vin_hash: [u8; 32], new_o
 
     Ok(())
 }
+
+pub fn verify_owner_transfer() {
+    todo!()
+}
