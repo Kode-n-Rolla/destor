@@ -69,4 +69,4 @@ The vehicle market is the first use case, but the same model can be applied to o
 
 - [Architecture](./ARCHITECTURE.md)
 - [Security Model](./SECURITY.md)
-- [Roadmap](./ROADMAP.md)
+- [Roadmap](./Roadmap.md)
