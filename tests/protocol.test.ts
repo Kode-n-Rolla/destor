@@ -3,7 +3,7 @@ import { Program } from "@coral-xyz/anchor";
 import { Destor } from "../target/types/destor";
 import { expect } from "chai";
 
-describe("destor", () => {
+describe("destor::protocol", () => {
     ///////////////////////////////
     //       Preparation         //
     ///////////////////////////////
