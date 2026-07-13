@@ -3,6 +3,8 @@ import { Program } from "@coral-xyz/anchor";
 import { Destor } from "../target/types/destor";
 import { expect } from "chai";
 import { ensureProtocolInitialized } from "./helpers/protocol";
+import { testAdmin, airdrop } from "./helpers/actors";
+import { Roles } from "./helpers/roles";
 
 describe("destor::organization", () => {
     ///////////////////////////////
@@ -16,7 +18,7 @@ describe("destor::organization", () => {
     const airdropSolAmount = 7;
 
     // Actors
-    let admin: anchor.web3.Keypair;
+    //let admin: anchor.web3.Keypair;
     let authority: anchor.web3.Keypair;
 
     let protocolPda: anchor.web3.PublicKey;
@@ -24,36 +26,13 @@ describe("destor::organization", () => {
     let organizationPda: anchor.web3.PublicKey;
     let organizationBump: number;
 
-    // Airdrop function
-    const airdrop = async (
-        pubkey: anchor.web3.PublicKey,
-        sol = airdropSolAmount
-    ) => {
-        const sig = await provider.connection.requestAirdrop(
-            pubkey,
-            sol * anchor.web3.LAMPORTS_PER_SOL
-        );
-
-        const latest = await provider.connection.getLatestBlockhash();
-        await provider.connection.confirmTransaction(
-            {
-                signature: sig,
-                blockhash: latest.blockhash,
-                lastValidBlockHeight: latest.lastValidBlockHeight
-            },
-            "confirmed"
-        );
-    };
-
     ///////////////////////////////
     //           SetUp           //
     ///////////////////////////////
     before(async () => {
-        admin = anchor.web3.Keypair.generate();
+        await airdrop(provider, testAdmin.publicKey, airdropSolAmount);
 
-        await airdrop(admin.publicKey);
-
-        const protocol = await ensureProtocolInitialized(program, admin);
+        const protocol = await ensureProtocolInitialized(program, testAdmin);
 
         protocolPda = protocol.protocolPda;
     });
@@ -61,7 +40,7 @@ describe("destor::organization", () => {
     beforeEach(async () => {
         authority = anchor.web3.Keypair.generate();
 
-        await airdrop(authority.publicKey);
+        await airdrop(provider, authority.publicKey, airdropSolAmount);
 
         organizationId = anchor.web3.Keypair.generate()
             .publicKey
@@ -83,12 +62,12 @@ describe("destor::organization", () => {
     ///////////////////////////////
     //     Happy Path Tests      //
     ///////////////////////////////
-    it.only("register an organization", async () => {
+    it("register an organization", async () => {
         const threshold = 2;
 
         await program.methods
             .registerOrganization(
-                { manufacturer : {} },
+                Roles.manufacturer,
                 Array.from(organizationId),
                 authority.publicKey,
                 threshold
@@ -96,18 +75,19 @@ describe("destor::organization", () => {
             .accountsPartial({
                 protocolConfig: protocolPda,
                 organization: organizationPda,
-                admin: admin.publicKey,
+                admin: testAdmin.publicKey,
             })
-            .signers([admin])
+            .signers([testAdmin])
             .rpc();
 
-        const organizationAcount = await program.account.organization.fetch(organizationPda);
+        const organizationAccount = await program.account.organization.fetch(organizationPda);
 
-        expect(organizationAcount.authority.equals(authority.publicKey)).to.eq(true);
-        expect(organizationAcount.pendingAuthority.equals(anchor.web3.PublicKey.default)).to.eq(true);
-        expect(Buffer.from(organizationAcount.organizationId).equals(organizationId)).to.eq(true);
-        expect(organizationAcount.threshold).to.eq(threshold);
-        expect(organizationAcount.active).to.eq(true);
-        expect(organizationAcount.bump).to.eq(organizationBump);
+        expect(organizationAccount.authority.equals(authority.publicKey)).to.eq(true);
+        expect(organizationAccount.pendingAuthority.equals(anchor.web3.PublicKey.default)).to.eq(true);
+        expect(Buffer.from(organizationAccount.organizationId).equals(organizationId)).to.eq(true);
+        expect(organizationAccount.threshold).to.eq(threshold);
+        expect(organizationAccount.active).to.eq(true);
+        expect(organizationAccount.role).to.deep.eq(Roles.manufacturer);
+        expect(organizationAccount.bump).to.eq(organizationBump);
     });
 });
