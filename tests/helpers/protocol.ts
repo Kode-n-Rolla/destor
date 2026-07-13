@@ -1,7 +1,6 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { Destor } from "../../target/types/destor";
-import { program } from "@coral-xyz/anchor/dist/cjs/native/system";
 
 export const getProtocolPda = (programid: anchor.web3.PublicKey) => {
     return anchor.web3.PublicKey.findProgramAddressSync(
