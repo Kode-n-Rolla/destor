@@ -139,7 +139,7 @@ describe("destor::organization", () => {
         expect(organizationAfterChange.threshold).to.be.eq(newThreshold);
     });
 
-    it.only("set invalid threshold for organization", async () => {
+    it("set invalid threshold for organization", async () => {
         const newThreshold = 1;
         let failed = false;
 
@@ -149,7 +149,6 @@ describe("destor::organization", () => {
             protocolPda
         });
 
-        
         try {
             await program.methods
             .setOrganizationThreshold(newThreshold)
