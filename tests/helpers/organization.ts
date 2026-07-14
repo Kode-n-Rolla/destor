@@ -26,7 +26,7 @@ export const getOrganizationPda = (
     );
 };
 
-export const CreateOrganization = async ({
+export const createOrganization = async ({
     program,
     admin,
     protocolPda,

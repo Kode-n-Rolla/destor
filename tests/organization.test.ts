@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { ensureProtocolInitialized } from "./helpers/protocol";
 import { testAdmin, airdrop } from "./helpers/actors";
 import { Roles } from "./helpers/roles";
-import { CreateOrganization } from "./helpers/organization";
+import { createOrganization } from "./helpers/organization";
 
 describe("destor::organization", () => {
     ///////////////////////////////
@@ -92,7 +92,7 @@ describe("destor::organization", () => {
     });
 
     it("deactivate organization", async () => {
-        const organization = await CreateOrganization({
+        const organization = await createOrganization({
             program,
             admin: testAdmin,
             protocolPda
@@ -111,5 +111,65 @@ describe("destor::organization", () => {
         const organizationAccount = await program.account.organization.fetch(organization.organizationPda);
 
         expect(organizationAccount.active).to.be.eq(false);
+    });
+
+    it("set valid threshold for organization", async () => {
+        const newThreshold = 4;
+
+        const organization = await createOrganization({
+            program,
+            admin: testAdmin,
+            protocolPda
+        });
+
+        const organizationBeforeChange = await program.account.organization.fetch(organization.organizationPda);
+
+        await program.methods
+            .setOrganizationThreshold(newThreshold)
+            .accountsPartial({
+                authority: organization.authority.publicKey,
+                organization: organization.organizationPda
+            })
+            .signers([organization.authority])
+            .rpc();
+
+        const organizationAfterChange = await program.account.organization.fetch(organization.organizationPda);
+
+        expect(organizationBeforeChange.threshold).to.eq(organization.threshold);
+        expect(organizationAfterChange.threshold).to.be.eq(newThreshold);
+    });
+
+    it.only("set invalid threshold for organization", async () => {
+        const newThreshold = 1;
+        let failed = false;
+
+        const organization = await createOrganization({
+            program,
+            admin: testAdmin,
+            protocolPda
+        });
+
+        
+        try {
+            await program.methods
+            .setOrganizationThreshold(newThreshold)
+            .accountsPartial({
+                authority: organization.authority.publicKey,
+                organization: organization.organizationPda
+            })
+            .signers([organization.authority])
+            .rpc();
+            
+            expect.fail("Expected InvalidThresholdValue error");
+        } catch (err) {
+            failed = true;
+            const anchorError = err as anchor.AnchorError;
+            expect(anchorError.error.errorCode.code).to.eq("InvalidThresholdValue");
+        }
+        
+        const organizationAfterFail = await program.account.organization.fetch(organization.organizationPda);
+
+        expect(failed).to.be.eq(true);
+        expect(organizationAfterFail.threshold).to.eq(organization.threshold);
     });
 });
