@@ -5,6 +5,7 @@ import { expect } from "chai";
 import { ensureProtocolInitialized } from "./helpers/protocol";
 import { testAdmin, airdrop } from "./helpers/actors";
 import { Roles } from "./helpers/roles";
+import { CreateOrganization } from "./helpers/organization";
 
 describe("destor::organization", () => {
     ///////////////////////////////
@@ -58,7 +59,6 @@ describe("destor::organization", () => {
         organizationBump = bump;
     })
 
-
     ///////////////////////////////
     //     Happy Path Tests      //
     ///////////////////////////////
@@ -89,5 +89,27 @@ describe("destor::organization", () => {
         expect(organizationAccount.active).to.eq(true);
         expect(organizationAccount.role).to.deep.eq(Roles.manufacturer);
         expect(organizationAccount.bump).to.eq(organizationBump);
+    });
+
+    it("deactivate organization", async () => {
+        const organization = await CreateOrganization({
+            program,
+            admin: testAdmin,
+            protocolPda
+        });
+
+        await program.methods
+            .deactivateOrganization()
+            .accountsPartial({
+                admin: testAdmin.publicKey,
+                organization: organization.organizationPda,
+                protocolConfig: protocolPda,
+            })
+            .signers([testAdmin])
+            .rpc();
+
+        const organizationAccount = await program.account.organization.fetch(organization.organizationPda);
+
+        expect(organizationAccount.active).to.be.eq(false);
     });
 });
