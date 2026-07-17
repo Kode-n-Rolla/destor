@@ -35,7 +35,7 @@ pub mod destor {
         instructions::organization::set_organization_threshold(ctx, threshold)
     }
 
-    pub fn request_authority_transfer(ctx: Context<PendingNewAuthority>, new_authority: Pubkey) -> Result<()> {
+    pub fn request_authority_transfer(ctx: Context<RequestNewAuthority>, new_authority: Pubkey) -> Result<()> {
         instructions::organization::request_authority_transfer(ctx, new_authority)
     }
 

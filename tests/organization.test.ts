@@ -65,6 +65,7 @@ describe("destor::organization", () => {
     it("register an organization", async () => {
         const threshold = 2;
 
+        // Action
         await program.methods
             .registerOrganization(
                 Roles.manufacturer,
@@ -82,6 +83,7 @@ describe("destor::organization", () => {
 
         const organizationAccount = await program.account.organization.fetch(organizationPda);
 
+        // Assertion
         expect(organizationAccount.authority.equals(authority.publicKey)).to.eq(true);
         expect(organizationAccount.pendingAuthority.equals(anchor.web3.PublicKey.default)).to.eq(true);
         expect(Buffer.from(organizationAccount.organizationId).equals(organizationId)).to.eq(true);
@@ -98,6 +100,7 @@ describe("destor::organization", () => {
             protocolPda
         });
 
+        // Action
         await program.methods
             .deactivateOrganization()
             .accountsPartial({
@@ -110,6 +113,7 @@ describe("destor::organization", () => {
 
         const organizationAccount = await program.account.organization.fetch(organization.organizationPda);
 
+        // Assertion
         expect(organizationAccount.active).to.be.eq(false);
     });
 
@@ -151,13 +155,13 @@ describe("destor::organization", () => {
 
         try {
             await program.methods
-            .setOrganizationThreshold(newThreshold)
-            .accountsPartial({
-                authority: organization.authority.publicKey,
-                organization: organization.organizationPda
-            })
-            .signers([organization.authority])
-            .rpc();
+                .setOrganizationThreshold(newThreshold)
+                .accountsPartial({
+                    authority: organization.authority.publicKey,
+                    organization: organization.organizationPda
+                })
+                .signers([organization.authority])
+                .rpc();
             
             expect.fail("Expected InvalidThresholdValue error");
         } catch (err) {
@@ -170,5 +174,44 @@ describe("destor::organization", () => {
 
         expect(failed).to.be.eq(true);
         expect(organizationAfterFail.threshold).to.eq(organization.threshold);
+    });
+
+    it("change authority", async () => {
+        const newAuthority = anchor.web3.Keypair.generate();
+
+        const organization = await createOrganization({
+            program,
+            admin: testAdmin,
+            protocolPda
+        });
+
+        // Request authority transfer
+        await program.methods
+            .requestAuthorityTransfer(newAuthority.publicKey)
+            .accountsPartial({
+                authority: organization.authority.publicKey,
+                organization: organization.organizationPda
+            })
+            .signers([organization.authority])
+            .rpc();
+
+        const organizationAfterRequestAuthorityTransfer = await program.account.organization.fetch(organization.organizationPda);
+        expect(organizationAfterRequestAuthorityTransfer.pendingAuthority.equals(newAuthority.publicKey)).to.eq(true);
+
+        // Accept authority transfer
+        await program.methods
+            .acceptAuthorityTransfer()
+            .accountsPartial({
+                pendingAuthority: newAuthority.publicKey,
+                organization: organization.organizationPda
+            })
+            .signers([newAuthority])
+            .rpc();
+
+        const organizationAfterAcceptAuthorityTransfer = await program.account.organization.fetch(organization.organizationPda);
+        
+        expect(organizationAfterAcceptAuthorityTransfer.authority.equals(newAuthority.publicKey)).to.eq(true);
+        expect(organizationAfterAcceptAuthorityTransfer.pendingAuthority.equals(anchor.web3.PublicKey.default)).to.eq(true);
+        expect(organizationAfterAcceptAuthorityTransfer.authority.equals(organization.authority.publicKey)).to.eq(false);
     });
 });

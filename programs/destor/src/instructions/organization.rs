@@ -142,7 +142,7 @@ pub fn set_organization_threshold(ctx: Context<SetThreshold>, threshold: u8) -> 
 }
 
 #[derive(Accounts)]
-pub struct PendingNewAuthority<'info> {
+pub struct RequestNewAuthority<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
 
@@ -155,7 +155,7 @@ pub struct PendingNewAuthority<'info> {
     pub organization: Account<'info, Organization>,
 }
 
-pub fn request_authority_transfer(ctx: Context<PendingNewAuthority>, new_authority: Pubkey) -> Result<()> {
+pub fn request_authority_transfer(ctx: Context<RequestNewAuthority>, new_authority: Pubkey) -> Result<()> {
     require!(ctx.accounts.organization.active, DeStorError::OrganizationNotActive);
     require_neq!(new_authority, Pubkey::default(), DeStorError::InvalidPubkey);
     require_neq!(ctx.accounts.organization.authority, new_authority, DeStorError::InvalidPubkey);
