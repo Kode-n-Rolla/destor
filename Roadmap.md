@@ -12,6 +12,7 @@
 
 ## Milestone 2
 - [ ] add_note functionality
+- [ ] add re-activate member funcion
 - [ ] testing
 
 ## Milestone 3
