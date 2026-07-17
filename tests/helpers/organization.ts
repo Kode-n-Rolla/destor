@@ -15,12 +15,12 @@ type CreateOrganizationArgs = {
 
 export const getOrganizationPda = (
     programId: anchor.web3.PublicKey,
-    organizationid: Buffer
+    organizationId: Buffer
 ) => {
     return anchor.web3.PublicKey.findProgramAddressSync(
         [
             Buffer.from("organization"),
-            organizationid
+            organizationId
         ],
         programId
     );
