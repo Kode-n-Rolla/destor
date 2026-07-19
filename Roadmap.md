@@ -8,7 +8,7 @@
 - [X] deactivate_organization, set_organization_threshold, authority transfer
 - [X] mint_vehicle без NFT CPI или все-таки NFT?
 - [X] transfer_vehicle
-- [ ] testing
+- [X] testing
 
 ## Milestone 2
 - [ ] add_note functionality
@@ -19,6 +19,8 @@
 - [ ] implement NFT
 - [ ] testing
 
+## Milestone 4
+- [ ] Security testing
 
 # Future Features
 
