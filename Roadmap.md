@@ -5,13 +5,14 @@
 - [X] initialize_protocol
 - [X] register_organization
 - [X] add/remove member
-- [X] deactivate_organization, set_organization_threshold, authority transfer
+- [X] `deactivate_organization`, `set_organization_threshold`, authority transfer
 - [X] mint_vehicle без NFT CPI или все-таки NFT?
 - [X] transfer_vehicle
 - [X] testing
 
 ## Milestone 2
-- [ ] add_note functionality
+- [ ] add `verify_owner_transfer` function
+- [ ] add `add_note` functionality
 - [ ] add re-activate member funcion
 - [ ] testing
 
