@@ -14,9 +14,11 @@
 - [ ] add `verify_owner_transfer` function
 - [ ] add `add_note` functionality
 - [ ] add re-activate member funcion
+- [ ] add adding note to transfer functions (`transfer_vehicle`, `verify_owner_transfer`) (`?`)
 - [ ] testing
 
 ## Milestone 3
+- [ ] implement `enum` role for `Member`
 - [ ] implement NFT
 - [ ] testing
 
@@ -26,7 +28,6 @@
 # Future Features
 
 ## Upgrade itself
-- Add `enum` role for `Member`
 - ZK Compress (compressed accounts / ZK compression if account growth becomes expensive)
 
 ## Protocol
