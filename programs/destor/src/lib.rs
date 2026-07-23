@@ -10,7 +10,7 @@ pub mod instructions;
 pub mod state;
 pub mod types;
 
-declare_id!("FWrEp5K7BfRzJ5wK8w6yoKGKWKWHE96dSEuZheRwDCyH");
+declare_id!("2LK71LmHA2Tku1jLn7UVpFHCU48PCi7iJys5ccgz7bMB");
 
 #[program]
 pub mod destor {

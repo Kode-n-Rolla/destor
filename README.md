@@ -4,7 +4,7 @@
 
 [![Rust](https://img.shields.io/badge/Rust-2021-black?logo=rust)](https://www.rust-lang.org/)
 [![Solana](https://img.shields.io/badge/Solana-Program-14F195?logo=solana&logoColor=white)](https://solana.com/)
-[![Anchor](https://img.shields.io/badge/Anchor-0.32.1-2F2F2F)](https://www.anchor-lang.com/)
+[![Anchor](https://img.shields.io/badge/Anchor-1.1.2-2F2F2F)](https://www.anchor-lang.com/)
 [![Tests](https://img.shields.io/badge/Tests-Anchor%20TS-blue)](./tests/solanotes.ts)
 [![Status](https://img.shields.io/badge/status-in--progress-red)](#roadmap)
 

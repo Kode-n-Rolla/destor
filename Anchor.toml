@@ -6,10 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-destor = "FWrEp5K7BfRzJ5wK8w6yoKGKWKWHE96dSEuZheRwDCyH"
-
-[registry]
-url = "https://api.apr.dev"
+destor = "2LK71LmHA2Tku1jLn7UVpFHCU48PCi7iJys5ccgz7bMB"
 
 [provider]
 cluster = "localnet"
@@ -17,3 +14,5 @@ wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 \"tests/**/*.ts\""
+
+[hooks]
