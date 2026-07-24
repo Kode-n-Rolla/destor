@@ -218,7 +218,11 @@ describe("destor::vehicle", () => {
     const roadInspectionAuthority = anchor.web3.Keypair.generate();
     const roadInspectionWallet = anchor.web3.Keypair.generate();
 
-    await airdrop(provider, roadInspectionAuthority.publicKey, airdropSolAmount);
+    await airdrop(
+      provider,
+      roadInspectionAuthority.publicKey,
+      airdropSolAmount
+    );
     await airdrop(provider, roadInspectionWallet.publicKey, airdropSolAmount);
     await airdrop(provider, owner.publicKey, airdropSolAmount);
 
@@ -227,14 +231,14 @@ describe("destor::vehicle", () => {
       admin: testAdmin,
       protocolPda,
       authority: roadInspectionAuthority,
-      role: Roles.roadInspection
+      role: Roles.roadInspection,
     });
 
     const roadInspectionMember = await createMember({
       program,
       organizationPda: roadInspectionOrganization.organizationPda,
       authority: roadInspectionAuthority,
-      wallet: roadInspectionWallet
+      wallet: roadInspectionWallet,
     });
 
     vehicle = await createVehicle({
@@ -272,13 +276,25 @@ describe("destor::vehicle", () => {
       .signers([roadInspectionWallet])
       .rpc();
 
-    const vehicleAccountAfterTransfer = await program.account.vehicle.fetch(vehicle.vehiclePda);
+    const vehicleAccountAfterTransfer = await program.account.vehicle.fetch(
+      vehicle.vehiclePda
+    );
 
-    expect(vehicleAccountBeforeTransfer.owner.equals(owner.publicKey)).to.eq(true);
-    expect(vehicleAccountAfterTransfer.owner.equals(newOwner.publicKey)).to.eq(true);
+    expect(vehicleAccountBeforeTransfer.owner.equals(owner.publicKey)).to.eq(
+      true
+    );
+    expect(vehicleAccountAfterTransfer.owner.equals(newOwner.publicKey)).to.eq(
+      true
+    );
     expect(vehicleAccountBeforeTransfer.ownerCount).to.eq(1);
     expect(vehicleAccountAfterTransfer.ownerCount).to.eq(2);
-    expect(Buffer.from(vehicleAccountAfterTransfer.vinHash).equals(vehicle.vinHash)).to.eq(true);
-    expect(vehicleAccountAfterTransfer.manufacturer.equals(organization.organizationPda)).to.eq(true);
+    expect(
+      Buffer.from(vehicleAccountAfterTransfer.vinHash).equals(vehicle.vinHash)
+    ).to.eq(true);
+    expect(
+      vehicleAccountAfterTransfer.manufacturer.equals(
+        organization.organizationPda
+      )
+    ).to.eq(true);
   });
 });
