@@ -208,4 +208,77 @@ describe("destor::vehicle", () => {
     expect(vehicleAccountAfterTransfer.model).to.eq(vehicle.model);
     expect(vehicleAccountAfterTransfer.color).to.eq(vehicle.color);
   });
+
+  it.only("verify owner transfer", async () => {
+    let vehicle: Awaited<ReturnType<typeof createVehicle>>;
+
+    const owner = anchor.web3.Keypair.generate();
+    const newOwner = anchor.web3.Keypair.generate();
+
+    const roadInspectionAuthority = anchor.web3.Keypair.generate();
+    const roadInspectionWallet = anchor.web3.Keypair.generate();
+
+    await airdrop(provider, roadInspectionAuthority.publicKey, airdropSolAmount);
+    await airdrop(provider, roadInspectionWallet.publicKey, airdropSolAmount);
+    await airdrop(provider, owner.publicKey, airdropSolAmount);
+
+    const roadInspectionOrganization = await createOrganization({
+      program,
+      admin: testAdmin,
+      protocolPda,
+      authority: roadInspectionAuthority,
+      role: Roles.roadInspection
+    });
+
+    const roadInspectionMember = await createMember({
+      program,
+      organizationPda: roadInspectionOrganization.organizationPda,
+      authority: roadInspectionAuthority,
+      wallet: roadInspectionWallet
+    });
+
+    vehicle = await createVehicle({
+      program,
+      organizationPda: organization.organizationPda,
+      organizationId: organization.organizationId,
+      memberPda: member.memberPda,
+      wallet: manufacturerWallet,
+    });
+
+    await program.methods
+      .assignInitialOwner(Array.from(vehicle.vinHash), owner.publicKey)
+      .accountsPartial({
+        wallet: manufacturerWallet.publicKey,
+        vehicle: vehicle.vehiclePda,
+        organization: organization.organizationPda,
+        member: member.memberPda,
+      })
+      .signers([manufacturerWallet])
+      .rpc();
+
+    const vehicleAccountBeforeTransfer = await program.account.vehicle.fetch(
+      vehicle.vehiclePda
+    );
+
+    await program.methods
+      .verifyOwnerTransfer(Array.from(vehicle.vinHash), newOwner.publicKey)
+      .accountsPartial({
+        wallet: roadInspectionWallet.publicKey,
+        verifierOrganization: roadInspectionOrganization.organizationPda,
+        manufacturerOrganization: organization.organizationPda,
+        vehicle: vehicle.vehiclePda,
+        member: roadInspectionMember.memberPda,
+      })
+      .signers([roadInspectionWallet])
+      .rpc();
+
+    const vehicleAccountAfterTransfer = await program.account.vehicle.fetch(vehicle.vehiclePda);
+
+    expect(vehicleAccountBeforeTransfer.owner.equals(owner.publicKey)).to.eq(true);
+    expect(vehicleAccountAfterTransfer.owner.equals(newOwner.publicKey)).to.eq(true);
+    expect(vehicleAccountBeforeTransfer.ownerCount).to.eq(1);
+    expect(vehicleAccountAfterTransfer.ownerCount).to.eq(2);
+    expect(Buffer.from(vehicleAccountAfterTransfer.vinHash).equals(vehicle.vinHash)).to.eq(true);
+    expect(vehicleAccountAfterTransfer.manufacturer.equals(organization.organizationPda)).to.eq(true);
+  });
 });
