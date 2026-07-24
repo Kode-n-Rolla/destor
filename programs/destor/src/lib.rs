@@ -4,8 +4,8 @@ use crate::types::Role;
 use instructions::*;
 
 pub mod constant;
-pub mod events;
 pub mod error;
+pub mod events;
 pub mod instructions;
 pub mod state;
 pub mod types;
@@ -26,16 +26,25 @@ pub mod destor {
         role: Role,
         organization_id: [u8; 32],
         authority: Pubkey,
-        threshold: u8
+        threshold: u8,
     ) -> Result<()> {
-        instructions::organization::register_organization(ctx, role, organization_id, authority, threshold)
+        instructions::organization::register_organization(
+            ctx,
+            role,
+            organization_id,
+            authority,
+            threshold,
+        )
     }
 
     pub fn set_organization_threshold(ctx: Context<SetThreshold>, threshold: u8) -> Result<()> {
         instructions::organization::set_organization_threshold(ctx, threshold)
     }
 
-    pub fn request_authority_transfer(ctx: Context<RequestNewAuthority>, new_authority: Pubkey) -> Result<()> {
+    pub fn request_authority_transfer(
+        ctx: Context<RequestNewAuthority>,
+        new_authority: Pubkey,
+    ) -> Result<()> {
         instructions::organization::request_authority_transfer(ctx, new_authority)
     }
 
@@ -59,21 +68,32 @@ pub mod destor {
         ctx: Context<MintVehicle>,
         vin_hash: [u8; 32],
         model: String,
-        color: String
+        color: String,
     ) -> Result<()> {
         instructions::vehicle::mint_vehicle(ctx, vin_hash, model, color)
     }
 
-    pub fn assign_initial_owner(ctx: Context<InitialOwner>, vin_hash: [u8; 32], new_owner: Pubkey) -> Result<()> {
+    pub fn assign_initial_owner(
+        ctx: Context<InitialOwner>,
+        vin_hash: [u8; 32],
+        new_owner: Pubkey,
+    ) -> Result<()> {
         instructions::vehicle::assign_initial_owner(ctx, vin_hash, new_owner)
     }
 
-    pub fn transfer_vehicle(ctx: Context<TransferVehicle>, vin_hash: [u8; 32], new_owner: Pubkey) -> Result<()> {
+    pub fn transfer_vehicle(
+        ctx: Context<TransferVehicle>,
+        vin_hash: [u8; 32],
+        new_owner: Pubkey,
+    ) -> Result<()> {
         instructions::vehicle::transfer_vehicle(ctx, vin_hash, new_owner)
     }
 
-    pub fn verify_owner_transfer(ctx: Context<VerifyOwnerTransfer>, vin_hash: [u8; 32], new_owner: Pubkey) -> Result<()> {
+    pub fn verify_owner_transfer(
+        ctx: Context<VerifyOwnerTransfer>,
+        vin_hash: [u8; 32],
+        new_owner: Pubkey,
+    ) -> Result<()> {
         instructions::vehicle::verify_owner_transfer(ctx, vin_hash, new_owner)
     }
 }
-

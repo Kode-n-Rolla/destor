@@ -29,7 +29,8 @@ pub struct Vehicle {
 }
 
 impl Vehicle {
-    pub const INIT_SPACE: usize = 8 + 32 + 32 + 32 + (4 + MAX_MODEL_LENGTH) + 8 + 32 + (4 + MAX_COLOR_LENGTH) + 8 + 8 + 2 + 1;
+    pub const INIT_SPACE: usize =
+        8 + 32 + 32 + 32 + (4 + MAX_MODEL_LENGTH) + 8 + 32 + (4 + MAX_COLOR_LENGTH) + 8 + 8 + 2 + 1;
 }
 
 #[account]

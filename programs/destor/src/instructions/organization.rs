@@ -1,11 +1,14 @@
-use anchor_lang::prelude::*;
 use crate::{
     constant::{ORGANIZATION_SEED, PROTOCOL_CONFIG_SEED},
     error::DeStorError,
-    events::{AcceptedNewAuthority, OrganizationDeactivated, OrganizationRegistered, RequestedNewAuthority, SetOrganizationThreshold},
+    events::{
+        AcceptedNewAuthority, OrganizationDeactivated, OrganizationRegistered,
+        RequestedNewAuthority, SetOrganizationThreshold,
+    },
     state::{Organization, ProtocolConfig},
-    types::Role
+    types::Role,
 };
+use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 #[instruction(role: Role, organization_id: [u8; 32])]
@@ -37,7 +40,7 @@ pub fn register_organization(
     role: Role,
     organization_id: [u8; 32],
     authority: Pubkey,
-    threshold: u8
+    threshold: u8,
 ) -> Result<()> {
     require_gt!(threshold, 1, DeStorError::InvalidThresholdValue);
 
@@ -53,18 +56,16 @@ pub fn register_organization(
 
     let current_time = Clock::get()?.unix_timestamp;
 
-    emit!(
-        OrganizationRegistered {
-            admin: ctx.accounts.admin.key(),
-            role: organization.role.clone(),
-            organization_pda: ctx.accounts.organization.key(),
-            authority: ctx.accounts.organization.authority.key(),
-            organization_id: organization_id,
-            threshold: threshold,
-            timestamp: current_time,
-        }
-    );
-    
+    emit!(OrganizationRegistered {
+        admin: ctx.accounts.admin.key(),
+        role: organization.role.clone(),
+        organization_pda: ctx.accounts.organization.key(),
+        authority: ctx.accounts.organization.authority.key(),
+        organization_id: organization_id,
+        threshold: threshold,
+        timestamp: current_time,
+    });
+
     Ok(())
 }
 
@@ -88,7 +89,10 @@ pub struct DeactivateOrganization<'info> {
 }
 
 pub fn deactivate_organization(ctx: Context<DeactivateOrganization>) -> Result<()> {
-    require!(ctx.accounts.organization.active, DeStorError::OrganizationNotActive);
+    require!(
+        ctx.accounts.organization.active,
+        DeStorError::OrganizationNotActive
+    );
 
     let accounts = ctx.accounts;
 
@@ -96,13 +100,11 @@ pub fn deactivate_organization(ctx: Context<DeactivateOrganization>) -> Result<(
 
     let current_time = Clock::get()?.unix_timestamp;
 
-    emit!(
-        OrganizationDeactivated {
-            admin: accounts.admin.key(),
-            organization: accounts.organization.key(),
-            timestamp: current_time,
-        }
-    );
+    emit!(OrganizationDeactivated {
+        admin: accounts.admin.key(),
+        organization: accounts.organization.key(),
+        timestamp: current_time,
+    });
 
     Ok(())
 }
@@ -122,21 +124,22 @@ pub struct SetThreshold<'info> {
 
 pub fn set_organization_threshold(ctx: Context<SetThreshold>, threshold: u8) -> Result<()> {
     require_gt!(threshold, 1, DeStorError::InvalidThresholdValue);
-    require!(ctx.accounts.organization.active, DeStorError::OrganizationNotActive);
+    require!(
+        ctx.accounts.organization.active,
+        DeStorError::OrganizationNotActive
+    );
 
     ctx.accounts.organization.threshold = threshold;
 
     let current_time = Clock::get()?.unix_timestamp;
 
-    emit!(
-        SetOrganizationThreshold {
-            authority: ctx.accounts.authority.key(),
-            organization: ctx.accounts.organization.key(),
-            role: ctx.accounts.organization.role.clone(),
-            threshold: threshold,
-            timestamp: current_time,
-        }
-    );
+    emit!(SetOrganizationThreshold {
+        authority: ctx.accounts.authority.key(),
+        organization: ctx.accounts.organization.key(),
+        role: ctx.accounts.organization.role.clone(),
+        threshold: threshold,
+        timestamp: current_time,
+    });
 
     Ok(())
 }
@@ -155,25 +158,33 @@ pub struct RequestNewAuthority<'info> {
     pub organization: Account<'info, Organization>,
 }
 
-pub fn request_authority_transfer(ctx: Context<RequestNewAuthority>, new_authority: Pubkey) -> Result<()> {
-    require!(ctx.accounts.organization.active, DeStorError::OrganizationNotActive);
+pub fn request_authority_transfer(
+    ctx: Context<RequestNewAuthority>,
+    new_authority: Pubkey,
+) -> Result<()> {
+    require!(
+        ctx.accounts.organization.active,
+        DeStorError::OrganizationNotActive
+    );
     require_neq!(new_authority, Pubkey::default(), DeStorError::InvalidPubkey);
-    require_neq!(ctx.accounts.organization.authority, new_authority, DeStorError::InvalidPubkey);
+    require_neq!(
+        ctx.accounts.organization.authority,
+        new_authority,
+        DeStorError::InvalidPubkey
+    );
 
     let organization = &mut ctx.accounts.organization;
     organization.pending_authority = new_authority;
 
     let current_time = Clock::get()?.unix_timestamp;
-    
-    emit!(
-        RequestedNewAuthority {
-            current_authority: organization.authority.key(),
-            new_authority,
-            organization: organization.key(),
-            role: organization.role.clone(),
-            timestamp: current_time,
-        }
-    );
+
+    emit!(RequestedNewAuthority {
+        current_authority: organization.authority.key(),
+        new_authority,
+        organization: organization.key(),
+        role: organization.role.clone(),
+        timestamp: current_time,
+    });
 
     Ok(())
 }
@@ -193,7 +204,10 @@ pub struct AcceptNewAuthority<'info> {
 }
 
 pub fn accept_authority_transfer(ctx: Context<AcceptNewAuthority>) -> Result<()> {
-    require!(ctx.accounts.organization.active, DeStorError::OrganizationNotActive);
+    require!(
+        ctx.accounts.organization.active,
+        DeStorError::OrganizationNotActive
+    );
 
     let prev_authority = ctx.accounts.organization.authority;
 
@@ -202,15 +216,13 @@ pub fn accept_authority_transfer(ctx: Context<AcceptNewAuthority>) -> Result<()>
 
     let current_time = Clock::get()?.unix_timestamp;
 
-    emit!(
-        AcceptedNewAuthority {
-            prev_authority,
-            new_authority: ctx.accounts.pending_authority.key(),
-            organization: ctx.accounts.organization.key(),
-            role: ctx.accounts.organization.role.clone(),
-            timestamp: current_time,
-        }
-    );
+    emit!(AcceptedNewAuthority {
+        prev_authority,
+        new_authority: ctx.accounts.pending_authority.key(),
+        organization: ctx.accounts.organization.key(),
+        role: ctx.accounts.organization.role.clone(),
+        timestamp: current_time,
+    });
 
     Ok(())
 }

@@ -1,10 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{
-    constant::PROTOCOL_CONFIG_SEED,
-    events::ProtocolInitialized,
-    state::ProtocolConfig,
-};
+use crate::{constant::PROTOCOL_CONFIG_SEED, events::ProtocolInitialized, state::ProtocolConfig};
 
 #[derive(Accounts)]
 pub struct InitializeProtocol<'info> {
@@ -31,12 +27,10 @@ pub fn initialize_protocol(ctx: Context<InitializeProtocol>) -> Result<()> {
 
     let current_time = Clock::get()?.unix_timestamp;
 
-    emit!(
-        ProtocolInitialized {
+    emit!(ProtocolInitialized {
         admin: protocol_config.admin,
         timestamp: current_time,
-        }
-    );
+    });
 
     Ok(())
 }

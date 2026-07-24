@@ -1,7 +1,11 @@
-use anchor_lang::prelude::*;
 use crate::{
-    constant::{MAX_COLOR_LENGTH, MAX_MODEL_LENGTH, MEMBER_SEED, ORGANIZATION_SEED, VEHICLE_SEED}, error::DeStorError, events::{MintedVehicle, TransferredVehicle}, state::{Member, Organization, Vehicle}, types::Role,
+    constant::{MAX_COLOR_LENGTH, MAX_MODEL_LENGTH, MEMBER_SEED, ORGANIZATION_SEED, VEHICLE_SEED},
+    error::DeStorError,
+    events::{MintedVehicle, TransferredVehicle},
+    state::{Member, Organization, Vehicle},
+    types::Role,
 };
+use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 #[instruction(vin_hash: [u8; 32])]
@@ -38,12 +42,22 @@ pub fn mint_vehicle(
     ctx: Context<MintVehicle>,
     vin_hash: [u8; 32],
     model: String,
-    color: String
+    color: String,
 ) -> Result<()> {
-    require!(ctx.accounts.organization.active, DeStorError::OrganizationNotActive);
+    require!(
+        ctx.accounts.organization.active,
+        DeStorError::OrganizationNotActive
+    );
     require!(ctx.accounts.member.active, DeStorError::MemberIsNotActive);
-    require_eq!(ctx.accounts.organization.role, Role::Manufacturer, DeStorError::InvalidRole);
-    require_eq!(ctx.accounts.organization.key(), ctx.accounts.member.organization);
+    require_eq!(
+        ctx.accounts.organization.role,
+        Role::Manufacturer,
+        DeStorError::InvalidRole
+    );
+    require_eq!(
+        ctx.accounts.organization.key(),
+        ctx.accounts.member.organization
+    );
     require_gte!(MAX_MODEL_LENGTH, model.len(), DeStorError::StringToLong);
     require_gte!(MAX_COLOR_LENGTH, color.len(), DeStorError::StringToLong);
 
@@ -99,12 +113,35 @@ pub struct InitialOwner<'info> {
     pub member: Account<'info, Member>,
 }
 
-pub fn assign_initial_owner(ctx: Context<InitialOwner>, vin_hash: [u8; 32], new_owner: Pubkey) -> Result<()> {
-    require_eq!(ctx.accounts.vehicle.owner, Pubkey::default(), DeStorError::NotOwner);
-    require_eq!(ctx.accounts.vehicle.owner_count, 0, DeStorError::InitialOwnerAlreadyAssigned);
-    require_eq!(ctx.accounts.organization.key(), ctx.accounts.member.organization.key(), DeStorError::InvalidMember);
-    require_eq!(ctx.accounts.organization.role, Role::Manufacturer, DeStorError::InvalidRole);
-    require!(ctx.accounts.organization.active, DeStorError::OrganizationNotActive);
+pub fn assign_initial_owner(
+    ctx: Context<InitialOwner>,
+    vin_hash: [u8; 32],
+    new_owner: Pubkey,
+) -> Result<()> {
+    require_eq!(
+        ctx.accounts.vehicle.owner,
+        Pubkey::default(),
+        DeStorError::NotOwner
+    );
+    require_eq!(
+        ctx.accounts.vehicle.owner_count,
+        0,
+        DeStorError::InitialOwnerAlreadyAssigned
+    );
+    require_eq!(
+        ctx.accounts.organization.key(),
+        ctx.accounts.member.organization.key(),
+        DeStorError::InvalidMember
+    );
+    require_eq!(
+        ctx.accounts.organization.role,
+        Role::Manufacturer,
+        DeStorError::InvalidRole
+    );
+    require!(
+        ctx.accounts.organization.active,
+        DeStorError::OrganizationNotActive
+    );
     require!(ctx.accounts.member.active, DeStorError::MemberIsNotActive);
     require_neq!(new_owner, Pubkey::default(), DeStorError::InvalidPubkey);
 
@@ -148,15 +185,31 @@ pub struct TransferVehicle<'info> {
     pub organization: Account<'info, Organization>,
 }
 
-pub fn transfer_vehicle(ctx: Context<TransferVehicle>, vin_hash: [u8; 32], new_owner: Pubkey) -> Result<()> {
+pub fn transfer_vehicle(
+    ctx: Context<TransferVehicle>,
+    vin_hash: [u8; 32],
+    new_owner: Pubkey,
+) -> Result<()> {
     if ctx.accounts.vehicle.vin_hash != vin_hash {
         return err!(DeStorError::InvalidVin);
     }
 
-    require_eq!(ctx.accounts.vehicle.manufacturer.key(), ctx.accounts.organization.key(), DeStorError::InvalidVin);
-    require_eq!(ctx.accounts.seller.key(), ctx.accounts.vehicle.owner, DeStorError::NotOwner);
+    require_eq!(
+        ctx.accounts.vehicle.manufacturer.key(),
+        ctx.accounts.organization.key(),
+        DeStorError::InvalidVin
+    );
+    require_eq!(
+        ctx.accounts.seller.key(),
+        ctx.accounts.vehicle.owner,
+        DeStorError::NotOwner
+    );
     require_neq!(new_owner, Pubkey::default(), DeStorError::InvalidPubkey);
-    require_neq!(new_owner, ctx.accounts.seller.key(), DeStorError::InvalidPubkey);
+    require_neq!(
+        new_owner,
+        ctx.accounts.seller.key(),
+        DeStorError::InvalidPubkey
+    );
 
     let vehicle = &mut ctx.accounts.vehicle;
 
@@ -209,25 +262,52 @@ pub struct VerifyOwnerTransfer<'info> {
     pub member: Account<'info, Member>,
 }
 
-pub fn verify_owner_transfer(ctx: Context<VerifyOwnerTransfer>, vin_hash: [u8; 32], new_owner: Pubkey) -> Result<()> {
+pub fn verify_owner_transfer(
+    ctx: Context<VerifyOwnerTransfer>,
+    vin_hash: [u8; 32],
+    new_owner: Pubkey,
+) -> Result<()> {
     if ctx.accounts.vehicle.vin_hash != vin_hash {
         return err!(DeStorError::InvalidVin);
     }
 
-    require!(ctx.accounts.verifier_organization.active, DeStorError::OrganizationNotActive);
-    require_eq!(ctx.accounts.verifier_organization.role, Role::RoadInspection, DeStorError::InvalidRole);
+    require!(
+        ctx.accounts.verifier_organization.active,
+        DeStorError::OrganizationNotActive
+    );
+    require_eq!(
+        ctx.accounts.verifier_organization.role,
+        Role::RoadInspection,
+        DeStorError::InvalidRole
+    );
     require_eq!(
         ctx.accounts.manufacturer_organization.role,
         Role::Manufacturer,
         DeStorError::InvalidRole
     );
-    require_eq!(ctx.accounts.member.organization, ctx.accounts.verifier_organization.key(), DeStorError::InvalidMember);
+    require_eq!(
+        ctx.accounts.member.organization,
+        ctx.accounts.verifier_organization.key(),
+        DeStorError::InvalidMember
+    );
     require!(ctx.accounts.member.active, DeStorError::MemberIsNotActive);
-    require_eq!(ctx.accounts.vehicle.manufacturer, ctx.accounts.manufacturer_organization.key(), DeStorError::InvalidVin);
-    require_neq!(ctx.accounts.vehicle.owner, Pubkey::default(), DeStorError::NotOwner);
+    require_eq!(
+        ctx.accounts.vehicle.manufacturer,
+        ctx.accounts.manufacturer_organization.key(),
+        DeStorError::InvalidVin
+    );
+    require_neq!(
+        ctx.accounts.vehicle.owner,
+        Pubkey::default(),
+        DeStorError::NotOwner
+    );
     require_neq!(new_owner, Pubkey::default(), DeStorError::InvalidPubkey);
-    require_neq!(new_owner, ctx.accounts.vehicle.owner.key(), DeStorError::InvalidPubkey);
-    
+    require_neq!(
+        new_owner,
+        ctx.accounts.vehicle.owner.key(),
+        DeStorError::InvalidPubkey
+    );
+
     let vehicle = &mut ctx.accounts.vehicle;
     let old_owner = vehicle.owner;
 
