@@ -11,9 +11,9 @@
 - [X] testing
 
 ## Milestone 2
-- [ ] add `verify_owner_transfer` function
-- [ ] add `add_note` functionality
+- [X] add `verify_owner_transfer` function + test
 - [ ] add re-activate member funcion
+- [ ] add `add_note` functionality
 - [ ] add adding note to transfer functions (`transfer_vehicle`, `verify_owner_transfer`) (`?`)
 - [ ] testing
 
