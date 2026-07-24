@@ -70,6 +70,10 @@ pub mod destor {
 
     pub fn transfer_vehicle(ctx: Context<TransferVehicle>, vin_hash: [u8; 32], new_owner: Pubkey) -> Result<()> {
         instructions::vehicle::transfer_vehicle(ctx, vin_hash, new_owner)
-    } 
+    }
+
+    pub fn verify_owner_transfer(ctx: Context<VerifyOwnerTransfer>, vin_hash: [u8; 32], new_owner: Pubkey) -> Result<()> {
+        instructions::vehicle::verify_owner_transfer(ctx, vin_hash, new_owner)
+    }
 }
 
