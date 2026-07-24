@@ -209,7 +209,7 @@ describe("destor::vehicle", () => {
     expect(vehicleAccountAfterTransfer.color).to.eq(vehicle.color);
   });
 
-  it.only("verify owner transfer", async () => {
+  it("verify owner transfer", async () => {
     let vehicle: Awaited<ReturnType<typeof createVehicle>>;
 
     const owner = anchor.web3.Keypair.generate();
