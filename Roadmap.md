@@ -14,12 +14,13 @@
 - [X] add `verify_owner_transfer` function + test
 - [ ] add re-activate member funcion
 - [ ] add `add_note` functionality
-- [ ] add adding note to transfer functions (`transfer_vehicle`, `verify_owner_transfer`) (`?`)
+- [ ] add adding note to transfer functions (`transfer_vehicle`, `verify_owner_transfer`)
 - [ ] testing
 
 ## Milestone 3
-- [ ] implement `enum` role for `Member`
+- [ ] implement `enum` role for `Member` (`?`)
 - [ ] implement NFT
+- [ ] add `bump` field to accounts for optimization
 - [ ] testing
 
 ## Milestone 4
