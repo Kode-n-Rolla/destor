@@ -139,4 +139,73 @@ describe("destor::member", () => {
       true
     );
   });
+
+  it("reactivate member from organization", async () => {
+    const newMember = anchor.web3.Keypair.generate();
+
+    const organization = await createOrganization({
+      program,
+      admin: testAdmin,
+      protocolPda,
+      authority,
+    });
+
+    const [memberPda] = getMemberPda(
+      program.programId,
+      organization.organizationPda,
+      newMember.publicKey
+    );
+
+    // Add member
+    await program.methods
+      .addOrganizationMember(newMember.publicKey)
+      .accountsPartial({
+        authority: organization.authority.publicKey,
+        member: memberPda,
+        organization: organization.organizationPda,
+      })
+      .signers([organization.authority])
+      .rpc();
+
+    // Remove member
+    await program.methods
+      .removeOrganizationMember(newMember.publicKey)
+      .accountsPartial({
+        authority: organization.authority.publicKey,
+        member: memberPda,
+        organization: organization.organizationPda,
+      })
+      .signers([organization.authority])
+      .rpc();
+
+    const memberAccountAfterRemove = await program.account.member.fetch(
+      memberPda
+    );
+
+    // Reactivate member
+    await program.methods
+      .reactivateOrganizationMember(newMember.publicKey)
+      .accountsPartial({
+        authority: organization.authority.publicKey,
+        member: memberPda,
+        organization: organization.organizationPda,
+      })
+      .signers([organization.authority])
+      .rpc();
+
+    const memberAccountAfterReactivate = await program.account.member.fetch(
+      memberPda
+    );
+
+    expect(memberAccountAfterRemove.active).to.eq(false);
+    expect(memberAccountAfterReactivate.active).to.eq(true);
+    expect(
+      memberAccountAfterReactivate.organization.equals(
+        organization.organizationPda
+      )
+    ).to.eq(true);
+    expect(
+      memberAccountAfterReactivate.wallet.equals(newMember.publicKey)
+    ).to.eq(true);
+  });
 });
