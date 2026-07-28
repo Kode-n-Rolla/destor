@@ -64,6 +64,10 @@ pub mod destor {
         instructions::member::remove_organization_member(ctx, wallet)
     }
 
+    pub fn reactivate_organization_member(ctx: Context<ReactivateMember>, wallet: Pubkey) -> Result<()> {
+        instructions::member::reactivate_organization_member(ctx, wallet)
+    }
+
     pub fn mint_vehicle(
         ctx: Context<MintVehicle>,
         vin_hash: [u8; 32],

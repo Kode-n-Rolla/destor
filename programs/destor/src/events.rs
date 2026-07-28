@@ -72,6 +72,15 @@ pub struct OrganizationMemberRemoved {
 }
 
 #[event]
+pub struct OrganizationMemberReactivate {
+    pub organization_pda: Pubkey,
+    pub authority: Pubkey,
+    pub member_pda: Pubkey,
+    pub member: Pubkey,
+    pub timestamp: i64,
+}
+
+#[event]
 pub struct MintedVehicle {
     pub organization_pda: Pubkey,
     pub signer: Pubkey,
