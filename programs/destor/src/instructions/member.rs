@@ -1,7 +1,10 @@
 use anchor_lang::prelude::*;
 
 use crate::{
-    constant::MEMBER_SEED, error::DeStorError, events::{OrganizationMemberAdded, OrganizationMemberReactivate, OrganizationMemberRemoved}, state::{Member, Organization},
+    constant::MEMBER_SEED,
+    error::DeStorError,
+    events::{OrganizationMemberAdded, OrganizationMemberReactivate, OrganizationMemberRemoved},
+    state::{Member, Organization},
 };
 
 #[derive(Accounts)]
@@ -120,7 +123,10 @@ pub struct ReactivateMember<'info> {
     pub organization: Account<'info, Organization>,
 }
 
-pub fn reactivate_organization_member(ctx: Context<ReactivateMember>, wallet: Pubkey) -> Result<()> {
+pub fn reactivate_organization_member(
+    ctx: Context<ReactivateMember>,
+    wallet: Pubkey,
+) -> Result<()> {
     let accounts = ctx.accounts;
 
     require!(!accounts.member.active, DeStorError::MemberIsActive);
@@ -128,7 +134,11 @@ pub fn reactivate_organization_member(ctx: Context<ReactivateMember>, wallet: Pu
         accounts.organization.active,
         DeStorError::OrganizationNotActive
     );
-    require_eq!(accounts.member.organization, accounts.organization.key(), DeStorError::InvalidMember);
+    require_eq!(
+        accounts.member.organization,
+        accounts.organization.key(),
+        DeStorError::InvalidMember
+    );
     require_eq!(accounts.member.wallet, wallet, DeStorError::InvalidMember);
 
     accounts.member.active = true;
@@ -142,6 +152,6 @@ pub fn reactivate_organization_member(ctx: Context<ReactivateMember>, wallet: Pu
         member: wallet,
         timestamp: current_time,
     });
-    
+
     Ok(())
 }
