@@ -24,7 +24,9 @@
 - [ ] testing
 
 ## Milestone 4
+- [ ] Add docstrings for function, structs, etc. (`///`)
 - [ ] Security testing
+- [ ] Deploy demo with vehicles
 
 # Future Features
 
