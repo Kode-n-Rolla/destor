@@ -19,10 +19,10 @@ impl fmt::Display for Role {
             Role::Manufacturer => "Manufacturer",
             Role::Owner => "Owner",
             Role::RoadInspection => "Road Inspection",
-            Role::Service => "Serivce Station",
+            Role::Service => "Service Station",
         };
 
-        write!(f, "{}", role_str)
+        f.write_str(role_str)
     }
 }
 
