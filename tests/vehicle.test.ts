@@ -68,11 +68,7 @@ describe("destor::vehicle", () => {
     const model = "Chrysler 300C";
     const color = "Black";
 
-    const [vehiclePda, vehicleBump] = getVehiclePda(
-      program.programId,
-      organization.organizationId,
-      vinHash
-    );
+    const [vehiclePda, vehicleBump] = getVehiclePda(program.programId, vinHash);
 
     await program.methods
       .mintVehicle(Array.from(vinHash), model, color)
@@ -100,7 +96,7 @@ describe("destor::vehicle", () => {
     expect(vehicleAccount.model).to.eq(model);
     expect(vehicleAccount.color).to.eq(color);
     expect(vehicleAccount.mileage.toNumber()).to.eq(0);
-    expect(vehicleAccount.noteCount.toNumber()).to.eq(0);
+    expect(vehicleAccount.nextNoteIndex.toNumber()).to.eq(0);
     expect(vehicleAccount.ownerCount).to.eq(0);
     expect(vehicleAccount.bump).to.eq(vehicleBump);
     expect(vehicleAccount.manufacturedAt.toNumber()).to.be.greaterThan(0);
@@ -112,7 +108,6 @@ describe("destor::vehicle", () => {
     const vehicle = await createVehicle({
       program,
       organizationPda: organization.organizationPda,
-      organizationId: organization.organizationId,
       memberPda: member.memberPda,
       wallet: manufacturerWallet,
     });
@@ -153,7 +148,6 @@ describe("destor::vehicle", () => {
     vehicle = await createVehicle({
       program,
       organizationPda: organization.organizationPda,
-      organizationId: organization.organizationId,
       memberPda: member.memberPda,
       wallet: manufacturerWallet,
     });
@@ -244,7 +238,6 @@ describe("destor::vehicle", () => {
     vehicle = await createVehicle({
       program,
       organizationPda: organization.organizationPda,
-      organizationId: organization.organizationId,
       memberPda: member.memberPda,
       wallet: manufacturerWallet,
     });

@@ -30,7 +30,7 @@ pub struct MintVehicle<'info> {
         init,
         payer = wallet,
         space = Vehicle::INIT_SPACE,
-        seeds = [VEHICLE_SEED, organization.organization_id.as_ref(), vin_hash.as_ref()],
+        seeds = [VEHICLE_SEED, vin_hash.as_ref()],
         bump,
     )]
     pub vehicle: Account<'info, Vehicle>,
@@ -65,14 +65,14 @@ pub fn mint_vehicle(
     let current_time = Clock::get()?.unix_timestamp;
 
     vehicle.vin_hash = vin_hash;
-    vehicle.nft_asset = Pubkey::default(); // for now. @todo upgrade
+    vehicle.nft_asset = Pubkey::default(); // @todo upgrade when impl NFT
     vehicle.manufacturer = ctx.accounts.organization.key();
     vehicle.model = model;
     vehicle.manufactured_at = current_time;
     vehicle.owner = Pubkey::default();
     vehicle.color = color;
     vehicle.mileage = 0;
-    vehicle.note_count = 0;
+    vehicle.next_note_index = 0;
     vehicle.owner_count = 0;
     vehicle.bump = ctx.bumps.vehicle;
 
@@ -94,7 +94,7 @@ pub struct InitialOwner<'info> {
 
     #[account(
         mut,
-        seeds = [VEHICLE_SEED, organization.organization_id.as_ref(), vin_hash.as_ref()],
+        seeds = [VEHICLE_SEED, vin_hash.as_ref()],
         bump,
     )]
     pub vehicle: Account<'info, Vehicle>,
@@ -173,7 +173,7 @@ pub struct TransferVehicle<'info> {
 
     #[account(
         mut,
-        seeds = [VEHICLE_SEED, organization.organization_id.as_ref(), vin_hash.as_ref()],
+        seeds = [VEHICLE_SEED, vin_hash.as_ref()],
         bump,
     )]
     pub vehicle: Account<'info, Vehicle>,
@@ -249,7 +249,7 @@ pub struct VerifyOwnerTransfer<'info> {
 
     #[account(
         mut,
-        seeds = [VEHICLE_SEED, manufacturer_organization.organization_id.as_ref(), vin_hash.as_ref()],
+        seeds = [VEHICLE_SEED, vin_hash.as_ref()],
         bump,
     )]
     pub vehicle: Account<'info, Vehicle>,
@@ -323,5 +323,11 @@ pub fn verify_owner_transfer(
         timestamp: current_time,
     });
 
+    Ok(())
+}
+
+pub fn change_color() -> Result<()> {
+
+    // @todo add event, invoke creation note and add handler to lib.rs
     Ok(())
 }

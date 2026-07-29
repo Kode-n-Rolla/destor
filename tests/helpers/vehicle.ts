@@ -5,7 +5,6 @@ import { Destor } from "../../target/types/destor";
 type CreateVehicleArgs = {
   program: Program<Destor>;
   organizationPda: anchor.web3.PublicKey;
-  organizationId: Buffer;
   memberPda: anchor.web3.PublicKey;
   wallet: anchor.web3.Keypair;
   vinHash?: Buffer;
@@ -15,11 +14,10 @@ type CreateVehicleArgs = {
 
 export const getVehiclePda = (
   programId: anchor.web3.PublicKey,
-  organizationId: Buffer,
   vinHash: Buffer
 ) => {
   return anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from("vehicle"), organizationId, vinHash],
+    [Buffer.from("vehicle"), vinHash],
     programId
   );
 };
@@ -27,18 +25,13 @@ export const getVehiclePda = (
 export const createVehicle = async ({
   program,
   organizationPda,
-  organizationId,
   memberPda,
   wallet,
   vinHash = anchor.web3.Keypair.generate().publicKey.toBuffer(),
   model = "Pontiac GTO",
   color = "Orange",
 }: CreateVehicleArgs) => {
-  const [vehiclePda, vehicleBump] = getVehiclePda(
-    program.programId,
-    organizationId,
-    vinHash
-  );
+  const [vehiclePda, vehicleBump] = getVehiclePda(program.programId, vinHash);
 
   await program.methods
     .mintVehicle(Array.from(vinHash), model, color)
