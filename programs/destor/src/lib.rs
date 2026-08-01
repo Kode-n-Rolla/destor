@@ -125,4 +125,8 @@ pub mod destor {
     ) -> Result<()> {
         instructions::note::add_owner_note(ctx, vin_hash, description, mileage, report_uri, report_hash)
     }
+
+    pub fn sign_note(ctx: Context<SignNote>, vin_hash: [u8; 32], mileage: u64) -> Result<()> {
+        instructions::note::sign_note(ctx, vin_hash, mileage)
+    }
 }
