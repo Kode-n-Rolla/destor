@@ -11,20 +11,26 @@
 - [X] testing
 
 ## Milestone 2
-- [X] add `verify_owner_transfer` function + test
-- [X] add re-activate member funcion + test
-- [ ] add `add_note` functionality
-- [ ] add adding note to transfer functions (`transfer_vehicle`, `verify_owner_transfer`)
+- [X] add `verify_owner_transfer` function + `test`
+- [X] add re-activate member funcion + `test`
+- [X] add `add_note` (for organization and owner)
+- [X] add `sign_note` functionality
+- [ ] testing
+- [ ] add `change_color` function
+- [ ] add adding note to transfer functions (`transfer_vehicle`, `verify_owner_transfer`, ` change_color`)
 - [ ] testing
 
 ## Milestone 3
 - [ ] implement `enum` role for `Member` (`?`)
+- [ ] use derived `bump`, where needed for optimization
+- [ ] reject note functionality
 - [ ] implement NFT
-- [ ] add `bump` field to accounts for optimization
 - [ ] testing
 
 ## Milestone 4
 - [ ] Add docstrings for function, structs, etc. (`///`)
+- [ ] need or not `pending_authority` as `Some()`?
+- [ ] implement restiction for frontrun protocol initialization
 - [ ] Security testing
 - [ ] Deploy demo with vehicles
 
