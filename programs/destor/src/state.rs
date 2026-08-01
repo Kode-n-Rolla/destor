@@ -101,6 +101,7 @@ pub struct Note {
     pub signers: Vec<Pubkey>,
     pub report_uri: String,  // should have a max length.
     pub report_hash: String, // can verify the off-chain report content.
+    pub required_signers: u8,
     pub bump: u8,
 }
 
@@ -118,5 +119,6 @@ impl Note {
         + (4 + MAX_NOTE_SIGNERS * 32)  // signers
         + (4 + MAX_REPORT_URI_LENGTH)  // report_uri
         + (4 + MAX_REPORT_HASH_LENGTH) // report_hash
+        + 1   // required_signers
         +1;   // bump 
 }

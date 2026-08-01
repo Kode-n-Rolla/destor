@@ -107,3 +107,14 @@ pub struct AddedNote {
     pub note_kind: NoteKind,
     pub timestamp: i64,
 }
+
+#[event]
+pub struct SignedNote {
+    pub signer: Pubkey,
+    pub vehicle_pda: Pubkey,
+    pub note_pda: Pubkey,
+    pub note_index: u64,
+    pub organization_pda: Pubkey,
+    pub role: Role,
+    pub timestamp: i64,
+}

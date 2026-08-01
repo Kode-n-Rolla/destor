@@ -34,4 +34,12 @@ pub enum DeStorError {
     NotOwner,
     #[msg("Initial Owner Already Assigned")]
     InitialOwnerAlreadyAssigned,
+    #[msg("Vehicle and note does not match")]
+    InvalidVehicleOrNote,
+    #[msg("Invalid Note")]
+    InvalidNote,
+    #[msg("Member already signed the note")]
+    MemberAlreadySigner,
+    #[msg("Mileage must be greater than the previous mileage")]
+    InvalidMileage,
 }
