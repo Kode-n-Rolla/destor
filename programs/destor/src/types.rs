@@ -6,7 +6,7 @@ use std::fmt;
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq)]
 pub enum Role {
     Manufacturer,
-    Service,
+    ServiceHub,
     RoadInspection,
     Insurance,
     Owner,
@@ -19,18 +19,18 @@ impl fmt::Display for Role {
             Role::Manufacturer => "Manufacturer",
             Role::Owner => "Owner",
             Role::RoadInspection => "Road Inspection",
-            Role::Service => "Service Station",
+            Role::ServiceHub => "Service Station",
         };
 
         f.write_str(role_str)
     }
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq)]
 pub enum NoteKind {
     Manufacturing,
     Service,
-    Inspection,
+    //Inspection,
     Accident,
     InsuranceReport,
     OwnerMaintenance,

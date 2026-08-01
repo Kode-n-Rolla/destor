@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::types::Role;
+use crate::types::{NoteKind, Role};
 
 #[event]
 pub struct ProtocolInitialized {
@@ -94,5 +94,16 @@ pub struct TransferredVehicle {
     pub old_owner: Pubkey,
     pub new_owner: Pubkey,
     pub vehicle_pda: Pubkey,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct AddedNote {
+    pub signer: Pubkey,
+    pub vehicle_pda: Pubkey,
+    pub note_pda: Pubkey,
+    pub note_index: u64,
+    pub role: Role,
+    pub note_kind: NoteKind,
     pub timestamp: i64,
 }

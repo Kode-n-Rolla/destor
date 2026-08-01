@@ -96,7 +96,7 @@ pub struct Note {
     pub role: Role,
     pub note_kind: NoteKind,
     pub mileage: u64,
-    pub timestamp: u64,
+    pub timestamp: i64,
     pub description: String, // restrict by 200 symbols, e.g.
     pub signers: Vec<Pubkey>,
     pub report_uri: String,  // should have a max length.
