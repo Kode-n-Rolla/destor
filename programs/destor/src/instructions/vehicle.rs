@@ -58,8 +58,8 @@ pub fn mint_vehicle(
         ctx.accounts.organization.key(),
         ctx.accounts.member.organization
     );
-    require_gte!(MAX_MODEL_LENGTH, model.len(), DeStorError::StringToLong);
-    require_gte!(MAX_COLOR_LENGTH, color.len(), DeStorError::StringToLong);
+    require_gte!(MAX_MODEL_LENGTH, model.len(), DeStorError::ModelToLong);
+    require_gte!(MAX_COLOR_LENGTH, color.len(), DeStorError::ColorToLong);
 
     let vehicle = &mut ctx.accounts.vehicle;
     let current_time = Clock::get()?.unix_timestamp;
