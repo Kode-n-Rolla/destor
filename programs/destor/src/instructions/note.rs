@@ -2,9 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::{
     constant::{INSURANCE_NOTE_SIGNERS, MANUFACTURER_NOTE_SIGNERS, MAX_DESCRIPTION_LENGTH, MAX_REPORT_HASH_LENGTH, MAX_REPORT_URI_LENGTH, MEMBER_SEED, NOTE_SEED, ORGANIZATION_SEED, OWNER_NOTE_SIGNERS, ROAD_INSPECTION_NOTE_SIGNERS, SERVICE_HUB_NOTE_SIGNERS, VEHICLE_SEED}, error::DeStorError, events::AddedNote, state::{Member, Note, Organization, Vehicle}, types::{
-        NoteKind,
-        Role,
-        Status,
+        NoteKind, Role, Status,
     },
 };
 
@@ -113,13 +111,78 @@ pub fn add_organization_note(
 }
 
 #[derive(Accounts)]
-pub struct AddOwnerNote {
+#[instruction(vin_hash: [u8; 32])]
+pub struct AddOwnerNote<'info> {
+    #[account(mut)]
+    pub owner: Signer<'info>,
 
+    #[account(
+        mut,
+        seeds = [VEHICLE_SEED, vin_hash.as_ref()],
+        bump,
+        has_one = owner,
+    )]
+    pub vehicle: Account<'info, Vehicle>,
+
+    #[account(
+        init,
+        payer = owner,
+        space = Note::INIT_SPACE,
+        seeds = [NOTE_SEED, vehicle.key().as_ref(), &vehicle.next_note_index.to_le_bytes()],
+        bump,
+    )]
+    pub note: Account<'info, Note>,
+    pub system_program: Program<'info, System>, 
 }
 
-pub fn add_owner_note() -> Result<()> {
+pub fn add_owner_note(
+    ctx: Context<AddOwnerNote>,
+    vin_hash: [u8; 32],
+    description: String,
+    mileage: u64,
+    report_uri: String,
+    report_hash: String,
+) -> Result<()> {
+    require_gte!(MAX_DESCRIPTION_LENGTH, description.len(), DeStorError::DescriptionToLong);
+    require_gte!(MAX_REPORT_URI_LENGTH, report_uri.len(), DeStorError::ReportUriToLong);
+    require_gte!(MAX_REPORT_HASH_LENGTH, report_hash.len(), DeStorError::ReportHashToLong);
 
-    // @todo add event and handler to lib.rs
+    if ctx.accounts.vehicle.vin_hash != vin_hash {
+        return err!(DeStorError::InvalidVin);
+    }
+
+    let vehicle = &mut ctx.accounts.vehicle;
+    let note = &mut ctx.accounts.note;
+    let current_time = Clock::get()?.unix_timestamp;
+
+    note.status = Status::Pending;
+    note.vehicle = vehicle.key();
+    note.note_index = vehicle.next_note_index;
+    note.role = Role::Owner;
+    note.note_kind = NoteKind::OwnerMaintenance;
+    note.mileage = mileage;
+    note.timestamp = current_time;
+    note.description = description;
+
+    note.signers = Vec::with_capacity(OWNER_NOTE_SIGNERS);
+    note.signers.push(ctx.accounts.owner.key());
+
+    note.report_uri = report_uri;
+    note.report_hash = report_hash;
+    note.bump = ctx.bumps.note;
+
+    vehicle.next_note_index += 1;
+
+    emit!(AddedNote {
+        signer: ctx.accounts.owner.key(),
+        vehicle_pda: vehicle.key(),
+        note_pda: note.key(),
+        note_index: note.note_index,
+        role: Role::Owner,
+        note_kind: note.note_kind,
+        timestamp: current_time,
+    });
+
     Ok(())
 }
 
