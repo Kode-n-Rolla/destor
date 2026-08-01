@@ -114,4 +114,15 @@ pub mod destor {
     ) -> Result<()> {
         instructions::note::add_organization_note(ctx, vin_hash, description, mileage, report_uri, report_hash)
     }
+
+    pub fn add_owner_note(
+        ctx: Context<AddOwnerNote>,
+        vin_hash: [u8; 32],
+        description: String,
+        mileage: u64,
+        report_uri: String,
+        report_hash: String,
+    ) -> Result<()> {
+        instructions::note::add_owner_note(ctx, vin_hash, description, mileage, report_uri, report_hash)
+    }
 }
