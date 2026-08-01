@@ -103,4 +103,15 @@ pub mod destor {
     ) -> Result<()> {
         instructions::vehicle::verify_owner_transfer(ctx, vin_hash, new_owner)
     }
+
+    pub fn add_organization_note(
+        ctx: Context<AddOrganizationNote>,
+        vin_hash: [u8; 32],
+        description: String,
+        mileage: u64,
+        report_uri: String,
+        report_hash: String,
+    ) -> Result<()> {
+        instructions::note::add_organization_note(ctx, vin_hash, description, mileage, report_uri, report_hash)
+    }
 }
