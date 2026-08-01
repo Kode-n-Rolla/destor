@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 use crate::{
-    constant::{INSURANCE_NOTE_SIGNERS, MANUFACTURER_NOTE_SIGNERS, MAX_DESCRIPTION_LENGTH, MAX_REPORT_HASH_LENGTH, MAX_REPORT_URI_LENGTH, MEMBER_SEED, NOTE_SEED, ORGANIZATION_SEED, OWNER_NOTE_SIGNERS, ROAD_INSPECTION_NOTE_SIGNERS, SERVICE_HUB_NOTE_SIGNERS, VEHICLE_SEED}, error::DeStorError, events::AddedNote, state::{Member, Note, Organization, Vehicle}, types::{
+    constant::{INSURANCE_NOTE_SIGNERS, MANUFACTURER_NOTE_SIGNERS, MAX_DESCRIPTION_LENGTH, MAX_NOTE_SIGNERS, MAX_REPORT_HASH_LENGTH, MAX_REPORT_URI_LENGTH, MEMBER_SEED, NOTE_SEED, ORGANIZATION_SEED, OWNER_NOTE_SIGNERS, ROAD_INSPECTION_NOTE_SIGNERS, SERVICE_HUB_NOTE_SIGNERS, VEHICLE_SEED}, error::DeStorError, events::{AddedNote, SignedNote}, state::{Member, Note, Organization, Vehicle}, types::{
         NoteKind, Role, Status,
     },
 };
@@ -58,9 +58,15 @@ pub fn add_organization_note(
     }
     require!(ctx.accounts.organization.active, DeStorError::OrganizationNotActive);
     require!(ctx.accounts.member.active, DeStorError::MemberIsNotActive);
+    require_gt!(mileage, ctx.accounts.vehicle.mileage, DeStorError::InvalidMileage);
     require_gte!(MAX_DESCRIPTION_LENGTH, description.len(),DeStorError::DescriptionToLong);
     require_gte!(MAX_REPORT_URI_LENGTH, report_uri.len(), DeStorError::ReportUriToLong);
     require_gte!(MAX_REPORT_HASH_LENGTH, report_hash.len(), DeStorError::ReportHashToLong);
+    require_eq!(
+        ctx.accounts.member.organization,
+        ctx.accounts.organization.key(),
+        DeStorError::InvalidMember
+    );
 
     let vehicle = &mut ctx.accounts.vehicle;
     let note = &mut ctx.accounts.note;
@@ -93,8 +99,10 @@ pub fn add_organization_note(
 
     note.report_uri = report_uri;
     note.report_hash = report_hash;
+    note.required_signers = required_signers as u8;
     note.bump = ctx.bumps.note;
 
+    vehicle.mileage = mileage;
     vehicle.next_note_index += 1;
 
     emit!(AddedNote {
@@ -143,6 +151,7 @@ pub fn add_owner_note(
     report_uri: String,
     report_hash: String,
 ) -> Result<()> {
+    require_gt!(mileage, ctx.accounts.vehicle.mileage, DeStorError::InvalidMileage);
     require_gte!(MAX_DESCRIPTION_LENGTH, description.len(), DeStorError::DescriptionToLong);
     require_gte!(MAX_REPORT_URI_LENGTH, report_uri.len(), DeStorError::ReportUriToLong);
     require_gte!(MAX_REPORT_HASH_LENGTH, report_hash.len(), DeStorError::ReportHashToLong);
@@ -169,6 +178,7 @@ pub fn add_owner_note(
 
     note.report_uri = report_uri;
     note.report_hash = report_hash;
+    note.required_signers = OWNER_NOTE_SIGNERS as u8;
     note.bump = ctx.bumps.note;
 
     vehicle.next_note_index += 1;
@@ -187,12 +197,94 @@ pub fn add_owner_note(
 }
 
 #[derive(Accounts)]
-pub struct SignNote {
+#[instruction(vin_hash: [u8; 32])]
+pub struct SignNote<'info> {
+    pub wallet: Signer<'info>,
+
+    #[account(
+        seeds = [ORGANIZATION_SEED, organization.organization_id.as_ref()],
+        bump,
+    )]
+    pub organization: Account<'info, Organization>,
+
+    #[account(
+        seeds = [MEMBER_SEED, organization.key().as_ref(), wallet.key().as_ref()],
+        bump,
+        has_one = wallet,
+    )]
+    pub member: Account<'info, Member>,
     
+    #[account(
+        mut,
+        seeds = [NOTE_SEED, vehicle.key().as_ref(), &note.note_index.to_le_bytes()],
+        bump,
+    )]
+    pub note: Account<'info, Note>,
+    
+    #[account(
+        mut,
+        seeds = [VEHICLE_SEED, vin_hash.as_ref()],
+        bump,
+    )]
+    pub vehicle: Account<'info, Vehicle>,
 }
 
-pub fn sign_note() -> Result<()> {
+pub fn sign_note(ctx: Context<SignNote>, vin_hash: [u8; 32], mileage: u64) -> Result<()> {
+    if ctx.accounts.vehicle.vin_hash != vin_hash {
+        return err!(DeStorError::InvalidVin);
+    }
 
-    // @todo add event and handler to lib.rs
+    if ctx.accounts.note.status == Status::Approved || ctx.accounts.note.status == Status::Rejected {
+        return err!(DeStorError::InvalidNote);
+    }
+
+    require!(ctx.accounts.organization.active, DeStorError::OrganizationNotActive);
+    require!(ctx.accounts.member.active, DeStorError::MemberIsNotActive);
+    require_gt!(mileage, ctx.accounts.note.mileage, DeStorError::InvalidMileage);
+    require_eq!(ctx.accounts.vehicle.key(), ctx.accounts.note.vehicle, DeStorError::InvalidVehicleOrNote);
+    require_eq!(ctx.accounts.note.signers.contains(&ctx.accounts.wallet.key()), false, DeStorError::MemberAlreadySigner);
+    require_eq!(
+        ctx.accounts.member.organization,
+        ctx.accounts.organization.key(),
+        DeStorError::InvalidMember
+    );
+
+    require!(
+        ctx.accounts.note.signers.len() < MAX_NOTE_SIGNERS,
+        DeStorError::InvalidNote
+    );
+
+    let note = &mut ctx.accounts.note;
+    let vehilce = &mut ctx.accounts.vehicle;
+    let current_time = Clock::get()?.unix_timestamp;
+
+    note.signers.push(ctx.accounts.wallet.key());
+    note.mileage = mileage;
+
+    if note.signers.len() >= note.required_signers as usize {
+        note.status = Status::Approved;
+        vehilce.mileage = mileage;
+    }
+
+    emit!(SignedNote{
+        signer: ctx.accounts.wallet.key(),
+        vehicle_pda: vehilce.key(),
+        note_pda: note.key(),
+        note_index: note.note_index,
+        organization_pda: ctx.accounts.organization.key(),
+        role: ctx.accounts.organization.role,
+        timestamp: current_time,
+    });
+
+    Ok(())
+}
+
+pub struct RejectNote {
+    // @todo
+}
+
+pub fn reject_note() -> Result<()> {
+
+    // event, lir.rs handler
     Ok(())
 }
