@@ -18,8 +18,16 @@ pub enum DeStorError {
     InvalidPubkey,
     #[msg("Invalid Role")]
     InvalidRole,
-    #[msg("String is too long")]
-    StringToLong,
+    #[msg("Description is too long")]
+    DescriptionToLong,
+    #[msg("Report URI is too long")]
+    ReportUriToLong,
+    #[msg("Report hash is too long")]
+    ReportHashToLong,
+    #[msg("Model hash is too long")]
+    ModelToLong,
+    #[msg("Color hash is too long")]
+    ColorToLong,
     #[msg("Invalid VIN")]
     InvalidVin,
     #[msg("Not Owner")]
