@@ -9,7 +9,7 @@
 [![Status](https://img.shields.io/badge/status-in--progress-red)](#roadmap)
 
 # About
-DeStor (Decentralized Storage) - is a decentralized protocol for building immutable history registries for real-world assets.
+DeStor (**De**centralized **Stor**age) - is a decentralized protocol for building immutable history registries for real-world assets.
 
 The vehicle registry is the first demonstration of the protocol.
 
