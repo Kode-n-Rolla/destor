@@ -12,10 +12,11 @@
 
 ## Milestone 2
 - [X] add `verify_owner_transfer` function
-- [X] test
+- [X] testing
 - [X] add re-activate member funcion
-- [X] test
+- [X] testing
 - [X] add `add_note` (for organization and owner)
+- [ ] testing
 - [X] add `sign_note` functionality
 - [ ] testing
 - [ ] add `change_color` function
