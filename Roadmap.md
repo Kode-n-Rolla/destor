@@ -11,8 +11,10 @@
 - [X] testing
 
 ## Milestone 2
-- [X] add `verify_owner_transfer` function + `test`
-- [X] add re-activate member funcion + `test`
+- [X] add `verify_owner_transfer` function
+- [X] test
+- [X] add re-activate member funcion
+- [X] test
 - [X] add `add_note` (for organization and owner)
 - [X] add `sign_note` functionality
 - [ ] testing
@@ -23,7 +25,8 @@
 ## Milestone 3
 - [ ] implement `enum` role for `Member` (`?`)
 - [ ] use derived `bump`, where needed for optimization
-- [ ] reject note functionality
+- [ ] add reject note functionality
+- [ ] add verify vehicle mileage with `protocol.admin` permission
 - [ ] implement NFT
 - [ ] testing
 
